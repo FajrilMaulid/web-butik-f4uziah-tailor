@@ -1,58 +1,161 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🧵 Butik & Tailor F4uziah Tailor (Web-Based Management System)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi Web **Butik & Tailor F4uziah Tailor** adalah sistem informasi manajemen butik dan pemesanan jahitan berbasis web yang dirancang khusus untuk mempermudah operasional butik serta memberikan pengalaman belanja dan pemesanan baju custom yang premium bagi pelanggan.
 
-## About Laravel
+Aplikasi ini dibangun menggunakan framework **Laravel 13** yang mutakhir, dikombinasikan dengan performa kilat **Vite 8** dan keindahan antarmuka utility-first **Tailwind CSS v4.0.0**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🛍️ Untuk Pelanggan (Customer Side)
+*   **Autentikasi & Registrasi**: Pendaftaran akun baru dan login terproteksi middleware demi keamanan data pelanggan.
+*   **Katalog Busana Interaktif**: Telusuri berbagai koleksi busana butik secara interaktif yang dilengkapi dengan fitur **Pencarian Produk** serta **Filter Kategori**.
+*   **Keranjang Belanja Premium**:
+    *   Menambahkan pakaian pilihan ke dalam keranjang.
+    *   **Custom Size**: Opsi penentuan ukuran baju custom langsung saat menambahkan produk ke keranjang.
+    *   Mengatur jumlah kuantitas (*quantity*) pembelian.
+*   **Checkout Fleksibel**: Mengirimkan pesanan dari keranjang belanja secara langsung ke database dengan status awal `menunggu` untuk ditinjau oleh Admin.
+*   **Manajemen Profil Mandiri**:
+    *   Memperbarui nama, email, nomor telepon, dan password.
+    *   Upload foto profil (*avatar*) dengan sistem manajemen penyimpanan file yang rapi.
+    *   **Riwayat Pesanan (Order History)**: Memantau status pesanan pakaian secara real-time langsung dari halaman profil.
 
-## Learning Laravel
+### 👔 Untuk Pengelola (Admin Side)
+*   **Dashboard Statistik**: Grafik ringkas untuk memantau data operasional seperti jumlah pelanggan, total produk, kategori, dan pesanan yang masuk.
+*   **Manajemen Kategori (CRUD)**: Pengelolaan klasifikasi pakaian (misal: Gamis, Kemeja, Kebaya, Jas, dll).
+*   **Manajemen Produk (CRUD)**: Mengelola katalog pakaian lengkap dengan nama, harga, deskripsi, kategori, dan unggah gambar produk berkualitas tinggi.
+*   **Manajemen Pengguna (CRUD)**: Memantau dan mengelola akun pelanggan yang terdaftar pada sistem.
+*   **Manajemen Pesanan / Orders (CRUD)**: 
+    *   Menerima dan memantau pesanan masuk secara real-time.
+    *   Memperbarui status pesanan (e.g., *menunggu*, *diproses*, *selesai*, *dibatalkan*).
+    *   Membaca catatan kustomisasi ukuran baju pelanggan.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Teknologi & Tools
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+| Teknologi | Versi | Peran dalam Proyek |
+| :--- | :--- | :--- |
+| **PHP** | `^8.3` | Bahasa pemrograman backend utama |
+| **Laravel Framework** | `^13.8` | Framework backend tangguh dengan MVC arsitektur |
+| **Tailwind CSS** | `^4.0.0` | Framework styling modern untuk tampilan premium |
+| **Vite** | `^8.0.0` | Build tool super cepat untuk kompilasi asset frontend |
+| **Concurrently** | `^9.0.1` | Pengelola proses multi-tasking lokal |
 
-## Agentic Development
+---
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🚀 Panduan Instalasi dan Setup
+
+Pastikan perangkat Anda sudah terinstal **PHP >= 8.3**, **Composer**, dan **Node.js** sebelum memulai.
+
+### ⚡ Cara Cepat (Satu Perintah Setup)
+Proyek ini telah dikonfigurasi dengan script otomasi instalasi di `composer.json`. Jalankan perintah berikut di terminal root proyek Anda:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer run setup
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+> [!NOTE]
+> Perintah di atas akan otomatis menginstal dependensi PHP (Composer), menyalin konfigurasi `.env`, men-generate App Key, menjalankan migrasi database, menginstal dependensi npm, dan melakukan build aset frontend.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 🪵 Cara Manual (Langkah-demi-Langkah)
 
-## Code of Conduct
+Jika ingin melakukan instalasi secara manual, ikuti langkah-langkah di bawah ini:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1.  **Clone / Buka Direktori Proyek**
+    Buka folder proyek ini di terminal Anda.
 
-## Security Vulnerabilities
+2.  **Salin File Konfigurasi Environment**
+    ```bash
+    cp .env.example .env
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+3.  **Sesuaikan Konfigurasi Database**
+    Buka file `.env` yang baru dibuat dan sesuaikan konfigurasi koneksi database Anda (misalnya menggunakan MySQL):
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=db_f4uziah_tailor
+    DB_USERNAME=root
+    DB_PASSWORD=
+    ```
 
-## License
+4.  **Instal Dependensi PHP (Composer)**
+    ```bash
+    composer install
+    ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+5.  **Generate Application Key**
+    ```bash
+    php artisan key:generate
+    ```
+
+6.  **Migrasi & Seed Database**
+    Jalankan migrasi tabel beserta pengisian data bawaan (seeder):
+    ```bash
+    php artisan migrate:fresh --seed
+    ```
+
+7.  **Instal Dependensi Frontend & Compile Asset**
+    ```bash
+    npm install
+    npm run build
+    ```
+
+---
+
+## 🔑 Akun Pengujian Bawaan (Default Accounts)
+
+Database Seeder telah mengonfigurasi dua akun dengan peran (*role*) berbeda untuk kebutuhan simulasi & pengujian:
+
+| Role | Email | Password | Kegunaan |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@tailor.com` | `password123` | Mengakses dashboard admin dan melakukan manajemen data (CRUD) |
+| **User** | `fajril@gmail.com` | `password123` | Melakukan simulasi belanja, kustomisasi ukuran baju, dan checkout |
+
+---
+
+## 💻 Menjalankan Aplikasi di Lingkungan Lokal
+
+### ⚡ Cara Cepat (Dev Server All-in-One)
+Anda tidak perlu membuka banyak tab terminal untuk menjalankan server local dan build tool secara terpisah. Cukup jalankan perintah kustom berikut di terminal root proyek Anda:
+
+```bash
+composer run dev
+```
+
+> [!TIP]
+> Perintah kustom ini memanfaatkan package `concurrently` untuk meluncurkan:
+> 1.  Server PHP Laravel (`php artisan serve`)
+> 2.  Queue Listener (`php artisan queue:listen`)
+> 3.  Laravel Pail Log Viewer (`php artisan pail`)
+> 4.  Vite Dev Server (`npm run dev`)
+> 
+> Semuanya berjalan secara simultan dalam satu jendela terminal!
+
+### 🪵 Cara Standar
+Jika ingin menjalankannya secara manual di terminal terpisah:
+*   Terminal 1 (Server Laravel):
+    ```bash
+    php artisan serve
+    ```
+*   Terminal 2 (Compiler Frontend):
+    ```bash
+    npm run dev
+    ```
+
+---
+
+## 📂 Struktur Folder Penting
+
+*   `app/Http/Controllers/` : Pengendali logika bisnis aplikasi (Registrasi, Profil, Admin Panel).
+*   `app/Models/` : Representasi tabel database Eloquent (User, Product, Category, Order, Measurement).
+*   `database/seeders/` : Data awal bawaan untuk pengujian (Produk, Kategori, Order, Akun Bawaan).
+*   `resources/views/pages/` : File visual antarmuka pengguna berbasis Blade Templating yang indah.
+    *   `resources/views/pages/user/` : Halaman Beranda, Keranjang, dan Profil Pelanggan.
+    *   `resources/views/pages/admin/` : Panel Dashboard, Kategori, Produk, Pesanan, dan Manajemen Pengguna.
+*   `routes/web.php` : Rute navigasi web lengkap yang dilindungi middleware otentikasi dan pengecekan role admin.
