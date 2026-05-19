@@ -1,0 +1,179 @@
+@extends('layouts.app')
+
+@section('title', 'F4UZIAHTAILOR - Beranda')
+
+@section('content')
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <h1>Temukan Pesona<br>Elegan Anda</h1>
+            <p>Koleksi busana eksklusif yang dirancang dengan presisi untuk menonjolkan keindahan dan kepercayaan diri Anda di setiap momen berharga.</p>
+            <a href="#search" class="btn-primary" style="text-decoration: none; text-align: center;">Jelajahi Koleksi</a>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800&auto=format&fit=crop" alt="Butik Interior">
+        </div>
+    </section>
+
+    <!-- Search & Filter -->
+    <section id="search" class="search-filter">
+        <form action="{{ route('home') }}#search" method="GET" class="search-wrapper">
+            @if(request('category'))
+                <input type="hidden" name="category" value="{{ request('category') }}">
+            @endif
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" name="search" class="search-bar" placeholder="Jelajahi koleksi eksklusif..." value="{{ request('search') }}">
+        </form>
+        <div class="filters">
+            <a href="{{ route('home', ['search' => request('search')]) }}#search" class="filter-btn {{ !request('category') ? 'active' : '' }}" style="text-decoration: none; display: inline-block;">Semua</a>
+            @foreach($categories as $cat)
+                <a href="{{ route('home', ['category' => $cat->id, 'search' => request('search')]) }}#search" class="filter-btn {{ request('category') == $cat->id ? 'active' : '' }}" style="text-decoration: none; display: inline-block;">{{ $cat->name }}</a>
+            @endforeach
+        </div>
+    </section>
+
+    <!-- Katalog Grid -->
+    <section id="katalog" class="catalog-container">
+        <div class="catalog-fade-left"></div>
+        <div class="catalog-fade-right"></div>
+        
+        <div class="catalog">
+            <div class="catalog-track">
+                @forelse($products as $product)
+                <div class="card">
+                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop' }}" alt="{{ $product->name }}" style="width: 100%; height: 350px; object-fit: cover;">
+                    <div class="card-body">
+                        <h3>{{ $product->name }}</h3>
+                        <p>Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        <button class="btn-detail" 
+                                data-id="{{ $product->id }}"
+                                data-name="{{ $product->name }}" 
+                                data-price="Rp {{ number_format($product->price, 0, ',', '.') }}" 
+                                data-desc="{{ $product->description }}" 
+                                data-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop' }}">
+                            Detail Baju
+                        </button>
+                    </div>
+                </div>
+                @empty
+                <div style="text-align: center; width: 100%; padding: 40px; color: #888;">
+                    <p>Tidak ada produk yang ditemukan.</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
+    <!-- Tentang Kami -->
+    <section id="tentang" class="about">
+        <div class="about-content">
+            <h2>Tentang Butik</h2>
+            <h3>Kisah Keanggunan Anda Dimulai di Sini</h3>
+            <p>Kami percaya bahwa busana bukan sekadar pakaian, melainkan cerminan karakter dan keanggunan sejati. Berdiri dengan dedikasi untuk menghadirkan kesempurnaan, setiap helai koleksi kami dirancang secara eksklusif menggunakan material premium pilihan.</p>
+        </div>
+        <div class="about-image">
+            <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=800&auto=format&fit=crop" alt="Tentang Butik">
+        </div>
+    </section>
+
+    <!-- Kontak & Maps -->
+    <section id="kontak" class="contact-maps">
+        <div class="contact-info">
+            <h2>Kunjungi Butik Kami</h2>
+            <p class="desc">Kami menanti kedatangan Anda untuk merasakan langsung kualitas premium dari setiap mahakarya kami.</p>
+
+            <div class="info-item">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <div>
+                    <strong>Alamat:</strong><br>
+                    Jl. Braga No. 123, Pusat Kota Bandung, Jawa Barat
+                </div>
+            </div>
+
+            <div class="info-item">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <div>
+                    <strong>Jam Operasi:</strong><br>
+                    Senin - Minggu | 10:00 - 20:00 WIB
+                </div>
+            </div>
+
+            <div class="info-item">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <div>
+                    <strong>Email:</strong><br>
+                    f4uziahtailor@gmail.com
+                </div>
+            </div>
+
+            <button class="btn-wa">Hubungi Via WhatsApp</button>
+        </div>
+        <div class="map-container">
+            <iframe src="https://maps.google.com/maps?q=Bandung&t=&z=13&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <div id="modal-detail" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detail Baju</h3>
+                <button class="close-modal" id="close-modal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-image-display" src="https://images.unsplash.com/photo-1618932260643-eee4a2f652a6?q=80&w=400&auto=format&fit=crop" alt="Foto Baju Gamis">
+                </div>
+
+                <div class="modal-info">
+                    <h2 class="modal-title" id="modal-title-display">Baju Gamis</h2>
+                    <p class="modal-price" id="modal-price-display">Rp.300.000</p>
+                    <p class="modal-desc" id="modal-desc-display">"Gamis berpotongan A-line dari Premium Linen yang sejuk, jatuh alami, dan memancarkan keanggunan minimalis."</p>
+
+                    <form action="{{ route('cart.add') }}" method="POST" id="form-add-cart">
+                        @csrf
+                        <input type="hidden" name="product_id" id="modal-product-id">
+                        <input type="hidden" name="size" id="modal-selected-size" value="Custom">
+                        <input type="hidden" name="quantity" id="modal-selected-qty" value="1">
+
+                        <div class="size-selector">
+                            <p class="section-label">Pilih Ukuran:</p>
+                            <div class="size-options">
+                                <button type="button" class="size-btn active" data-size="Custom">Custom</button>
+                                <button type="button" class="size-btn" data-size="S">S</button>
+                                <button type="button" class="size-btn" data-size="M">M</button>
+                                <button type="button" class="size-btn" data-size="L">L</button>
+                                <button type="button" class="size-btn" data-size="XL">XL</button>
+                                <button type="button" class="size-btn" data-size="2XL">2XL</button>
+                                <button type="button" class="size-btn" data-size="3XL">3XL</button>
+                            </div>
+                            <p class="size-note">*Ukuran custom dapat diukur oleh sendiri yang akan di bantu oleh admin, atau bisa datang ke butik untuk diukur langsung</p>
+                        </div>
+
+                        <div class="modal-action-row">
+                            <div class="quantity-selector">
+                                <p class="section-label">Jumlah:</p>
+                                <div class="qty-controls">
+                                    <button type="button" class="qty-btn" id="qty-minus">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    </button>
+                                    <span class="qty-number" id="qty-value">1</span>
+                                    <button type="button" class="qty-btn" id="qty-plus">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-add-cart">Tambah Ke Keranjang</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

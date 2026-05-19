@@ -1,0 +1,318 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora:wght@500;700&family=Nunito:wght@400;600;700&display=swap");
+
+:root {
+    --bg-krem: #fdf8f0;
+    --cokelat-utama: #9c7a63;
+    --cokelat-gelap: #85644c;
+    --teks-gelap: #333333;
+    --bg-admin: #f4f6f9;
+    --putih: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Nunito", sans-serif;
+    background-color: var(--bg-admin);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    color: var(--teks-gelap);
+}
+h1,
+h2,
+h3,
+.brand-logo {
+    font-family: "Lora", serif;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: var(--putih);
+    border-right: 1px solid #eae0d5;
+    display: flex;
+    flex-direction: column;
+}
+.brand-logo {
+    padding: 25px 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--cokelat-utama);
+    border-bottom: 1px solid #eae0d5;
+    text-align: center;
+    letter-spacing: 1px;
+}
+.nav-menu {
+    padding: 20px 0;
+    flex: 1;
+}
+.nav-item {
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--teks-gelap);
+    font-weight: 600;
+    transition: 0.3s;
+    border-left: 4px solid transparent;
+    line-height: 1; /* Menjaga teks sejajar vertikal secara presisi dengan ikon */
+}
+.sidebar-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.nav-item:hover,
+.nav-item.active {
+    background-color: var(--bg-krem);
+    color: var(--cokelat-utama);
+    border-left: 4px solid var(--cokelat-utama);
+}
+.nav-item.logout {
+    margin-top: auto;
+    color: #e74c3c;
+    border-top: 1px solid #eae0d5;
+}
+
+/* Main Content Wrapper */
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+    background-color: var(--putih);
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    border-bottom: 1px solid #eae0d5;
+}
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cokelat-gelap);
+}
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+}
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: var(--cokelat-utama);
+    color: var(--putih);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Lora", serif;
+    font-size: 18px;
+}
+
+/* Content Area */
+.content-area {
+    padding: 30px;
+    overflow-y: auto;
+    flex: 1;
+}
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background-color: var(--putih);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border-top: 4px solid var(--cokelat-utama);
+}
+.stat-card h3 {
+    font-size: 14px;
+    color: #888;
+    font-family: "Nunito", sans-serif;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.stat-card .number {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--cokelat-gelap);
+}
+
+/* Table Section */
+.table-container {
+    background-color: var(--putih);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.table-header h2 {
+    font-size: 18px;
+}
+.btn-tambah {
+    background-color: var(--cokelat-utama);
+    color: var(--putih);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-tambah:hover {
+    background-color: var(--cokelat-gelap);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th,
+td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eae0d5;
+}
+th {
+    color: var(--cokelat-gelap);
+    font-weight: 700;
+    background-color: var(--bg-krem);
+}
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.status-lunas {
+    background-color: #d4edda;
+    color: #155724;
+}
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Forms */
+.form-container {
+    background-color: var(--putih);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    max-width: 800px;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--teks-gelap);
+}
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #eae0d5;
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    transition: 0.3s;
+}
+.form-control:focus {
+    outline: none;
+    border-color: var(--cokelat-utama);
+    box-shadow: 0 0 0 3px rgba(156, 122, 99, 0.1);
+}
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Buttons */
+.btn-submit {
+    background-color: var(--cokelat-utama);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+}
+.btn-submit:hover {
+    background-color: var(--cokelat-gelap);
+}
+.btn-cancel {
+    background-color: #e0e0e0;
+    color: var(--teks-gelap);
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 10px;
+}
+.btn-cancel:hover {
+    background-color: #d0d0d0;
+}
+.btn-edit {
+    background-color: #f39c12;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+}
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+}
+.btn-action-group {
+    display: flex;
+    gap: 8px;
+}
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
