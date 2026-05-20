@@ -63,7 +63,7 @@
                                         </select>
                                         <button type="submit" class="btn-edit" style="padding: 6px 12px;">Update</button>
                                     </form>
-                                    
+
                                     <form action="{{ route('orders.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pesanan ini secara permanen?');" style="align-self: flex-start;">
                                         @csrf
                                         @method('DELETE')
