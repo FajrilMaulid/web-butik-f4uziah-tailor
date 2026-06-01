@@ -132,7 +132,6 @@
                                         </select>
                                         <button type="submit" class="btn-edit" style="padding: 6px 12px;">Update</button>
                                     </form>
-                                    
                                     <div style="display: flex; gap: 5px;">
                                         <a href="{{ route('orders.edit', $order->id) }}" class="btn-edit" style="background-color: #3b82f6; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; display: inline-block;">Edit Detail</a>
                                         

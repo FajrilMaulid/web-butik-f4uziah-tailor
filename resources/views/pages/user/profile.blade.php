@@ -141,6 +141,12 @@
 
             // Filter cards
             const cards = document.querySelectorAll('.history-card');
+            
+            // Jika tidak ada pesanan sama sekali di history, return early agar placeholder filter tidak ikut muncul
+            if (cards.length === 0) {
+                return;
+            }
+
             let visibleCount = 0;
             cards.forEach(card => {
                 const cardStatus = card.getAttribute('data-status');
