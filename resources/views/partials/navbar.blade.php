@@ -1,6 +1,13 @@
 <nav class="navbar">
     <div class="logo">F4UZIAHTAILOR</div>
-    <div class="nav-right">
+    
+    <button class="menu-toggle" id="menu-toggle" aria-label="Buka Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="nav-right" id="nav-menu">
         <ul class="nav-links">
             <li><a href="/#hero">Beranda</a></li>
             <li><a href="/#search">Katalog</a></li>

@@ -8,10 +8,18 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->get();
-        return view('pages.admin.users.index', compact('users'));
+        $search = $request->get('search');
+        $users = User::when($search, fn($q) => $q
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('phone_number', 'like', "%{$search}%")
+            )
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+        return view('pages.admin.users.index', compact('users', 'search'));
     }
 
     public function destroy(User $user)

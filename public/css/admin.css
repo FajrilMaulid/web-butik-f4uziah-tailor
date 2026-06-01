@@ -179,9 +179,12 @@ h3,
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
+    text-decoration: none;
+    display: inline-block;
 }
 .btn-tambah:hover {
     background-color: var(--cokelat-gelap);
+    text-decoration: none;
 }
 
 table {
@@ -316,3 +319,67 @@ textarea.form-control {
     color: #155724;
     border: 1px solid #c3e6cb;
 }
+
+/* Pagination Styling */
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+.page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background-color: var(--putih);
+    color: var(--cokelat-gelap);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    border: 1px solid #eae0d5;
+    transition: 0.3s;
+}
+.page-item:not(.disabled):not(.active) .page-link:hover {
+    background-color: var(--bg-krem);
+    border-color: var(--cokelat-utama);
+    color: var(--cokelat-utama);
+}
+.page-item.active .page-link {
+    background-color: var(--cokelat-utama);
+    color: var(--putih);
+    border-color: var(--cokelat-utama);
+}
+.page-item.disabled .page-link {
+    color: #bbb;
+    cursor: not-allowed;
+    background-color: #f9f9f9;
+}
+.pagination p {
+    margin-bottom: 0;
+    color: var(--teks-gelap);
+}
+
+/* --- Bootstrap Utilities untuk Pagination Laravel --- */
+.d-flex { display: flex !important; }
+.justify-content-between { justify-content: space-between !important; }
+.align-items-center { align-items: center !important; }
+.flex-fill { flex: 1 1 auto !important; }
+.d-none { display: none !important; }
+
+@media (min-width: 576px) {
+    .d-sm-none { display: none !important; }
+    .d-sm-flex { display: flex !important; }
+    .align-items-sm-center { align-items: center !important; }
+    .justify-content-sm-between { justify-content: space-between !important; }
+    .flex-sm-fill { flex: 1 1 auto !important; }
+}
+
+.text-muted { color: #888 !important; }
+.small { font-size: 13px; }
+.fw-semibold { font-weight: 700 !important; }

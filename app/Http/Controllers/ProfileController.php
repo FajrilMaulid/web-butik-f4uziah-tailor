@@ -26,16 +26,23 @@ class ProfileController extends Controller
         // 1. Validasi input form
         $request->validate([
             'name'         => 'required|string|max:255',
-            'phone_number' => 'required|string|max:15',
+            'phone_number' => ['required', 'string', 'min:9', 'max:15', 'regex:/^[0-9+\-\s]+$/'],
             'email'        => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password'     => 'nullable|string|min:6',
             'avatar'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'address'      => 'nullable|string',
+        ], [
+            'phone_number.min'   => 'Nomor telepon minimal 9 digit.',
+            'phone_number.max'   => 'Nomor telepon maksimal 15 digit.',
+            'phone_number.regex' => 'Nomor telepon hanya boleh mengandung angka.',
         ]);
+
 
         // 2. Update data dasar
         $user->name = $request->name;
         $user->phone_number = $request->phone_number;
         $user->email = $request->email;
+        $user->address = $request->address;
 
         // 3. Handle upload avatar jika ada
         if ($request->hasFile('avatar')) {

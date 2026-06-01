@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
         $productId = $request->input('product_id');
         $size = $request->input('size', 'Custom');
         $quantity = (int) $request->input('quantity', 1);
+        $notes = $request->input('notes', '');
 
         $product = \App\Models\Product::find($productId);
 
@@ -35,7 +36,8 @@ Route::middleware('auth')->group(function () {
             return back()->with('error', 'Produk tidak ditemukan!');
         }
 
-        $cartId = $productId . '-' . $size;
+        // Gunakan md5 dari catatan agar pesanan dengan catatan berbeda tidak saling menimpa di keranjang
+        $cartId = $productId . '-' . $size . '-' . md5($notes);
 
         if (isset($cart[$cartId])) {
             $cart[$cartId]['quantity'] += $quantity;
@@ -46,6 +48,7 @@ Route::middleware('auth')->group(function () {
                 'price' => $product->price,
                 'size' => $size,
                 'quantity' => $quantity,
+                'notes' => $notes,
                 'image' => $product->image
             ];
         }
@@ -77,12 +80,17 @@ Route::middleware('auth')->group(function () {
         }
 
         foreach ($cart as $item) {
+            $orderNotes = 'Ukuran: ' . $item['size'] . ', Jumlah: ' . $item['quantity'];
+            if (!empty($item['notes'])) {
+                $orderNotes .= '. Catatan: ' . $item['notes'];
+            }
+
             \App\Models\Order::create([
                 'user_id' => auth()->id(),
                 'product_id' => $item['product_id'],
                 'total_price' => $item['price'] * $item['quantity'],
                 'status' => 'menunggu',
-                'notes' => 'Ukuran: ' . $item['size'] . ', Jumlah: ' . $item['quantity'],
+                'notes' => $orderNotes,
             ]);
         }
 
@@ -95,9 +103,12 @@ Route::middleware('auth')->group(function () {
 // Route untuk ADMIN
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
+    Route::post('/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::get('/orders/export', [\App\Http\Controllers\Admin\OrderController::class, 'export'])->name('orders.export');
     Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
 });
 

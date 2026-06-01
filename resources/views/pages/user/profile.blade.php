@@ -44,13 +44,16 @@
                                     <input type="text" name="name" value="{{ Auth::user()->name ?? 'Siti Zuabidah' }}" placeholder="Username">
                                 </div>
                                 <div class="input-profile-group">
-                                    <input type="text" name="phone_number" value="{{ Auth::user()->phone_number ?? '' }}" placeholder="Nomer Ponsel">
+                                    <input type="tel" name="phone_number" id="phone_number_profile" value="{{ Auth::user()->phone_number ?? '' }}" placeholder="Nomer Ponsel (cth: 08123456789)" maxlength="15" minlength="9" pattern="[0-9+\-\s]{9,15}" oninput="this.value=this.value.replace(/[^0-9+\-\s]/g,'').slice(0,15)">
                                 </div>
                                 <div class="input-profile-group">
                                     <input type="email" name="email" value="{{ Auth::user()->email ?? 'sitizuabidah@gmail.com' }}" placeholder="Email">
                                 </div>
                                 <div class="input-profile-group">
                                     <input type="password" name="password" placeholder="Password (Kosongkan jika tidak diubah)">
+                                </div>
+                                <div class="input-profile-group" style="grid-column: 1 / -1;">
+                                    <textarea name="address" placeholder="Alamat Pengiriman (Kosongkan jika belum ada)" rows="3">{{ Auth::user()->address ?? '' }}</textarea>
                                 </div>
                             </div>
 
@@ -75,11 +78,13 @@
                         </div>
 
                         <div class="history-list">
-                            <!-- Placeholder ketika tidak ada data di fase filter tertentu -->
-                            <div id="no-orders-placeholder" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #888; width: 100%;">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px; color: #888;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                <h3 style="font-family: 'Nunito', sans-serif; margin-bottom: 10px; font-size: 18px; color: #666; text-align: center;">Tidak ada pesanan di fase ini</h3>
-                            </div>
+                            @if($orders->count() > 0)
+                                <!-- Placeholder ketika tidak ada data di fase filter tertentu -->
+                                <div id="no-orders-placeholder" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #888; width: 100%;">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px; color: #888;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    <h3 style="font-family: 'Nunito', sans-serif; margin-bottom: 10px; font-size: 18px; color: #666; text-align: center;">Tidak ada pesanan di fase ini</h3>
+                                </div>
+                            @endif
 
                             @forelse($orders as $order)
                                 @php

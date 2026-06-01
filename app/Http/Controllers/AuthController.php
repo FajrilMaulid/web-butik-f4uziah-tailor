@@ -28,9 +28,15 @@ class AuthController extends Controller
         $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => 'required|string|email|max:255|unique:users',
-            'phone_number' => 'required|string|max:15',
+            'phone_number' => ['required', 'string', 'min:9', 'max:15', 'regex:/^[0-9+\-\s]+$/'],
             'password'     => 'required|string|min:6',
+        ], [
+            'phone_number.required' => 'Nomor telepon wajib diisi.',
+            'phone_number.min'      => 'Nomor telepon minimal 9 digit.',
+            'phone_number.max'      => 'Nomor telepon maksimal 15 digit.',
+            'phone_number.regex'    => 'Nomor telepon hanya boleh mengandung angka.',
         ]);
+
 
         // 2. Simpan User ke Database
         $user = User::create([

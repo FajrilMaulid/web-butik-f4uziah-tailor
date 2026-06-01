@@ -16,13 +16,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Memanggil Seeder Kategori
-        $this->call([
-            CategorySeeder::class,
-            ProductSeeder::class,
-            OrderSeeder::class,
-        ]);
-
         // Membuat User Admin
         User::create([
             'name' => 'Admin F4uziahtailor',
@@ -39,6 +32,14 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password123'),
             'role' => 'user',
             'phone_number' => '089876543210'
+        ]);
+
+        // Memanggil Seeder Kategori, Produk, Order, dan Settings
+        $this->call([
+            CategorySeeder::class,
+            ProductSeeder::class,
+            OrderSeeder::class,
+            SettingSeeder::class,
         ]);
     }
 }

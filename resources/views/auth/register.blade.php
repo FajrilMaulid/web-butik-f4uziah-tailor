@@ -37,9 +37,27 @@
                         <input type="email" name="email" placeholder="Masukkan Email....." required value="{{ old('email') }}">
                     </div>
 
-                    <div class="input-group">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                        <input type="tel" name="phone_number" placeholder="Masukkan Nomer Ponsel....." required value="{{ old('phone_number') }}">
+                    <div class="input-group" style="flex-direction: column; align-items: flex-start; padding: 0;">
+                        <div style="display: flex; align-items: center; width: 100%; padding: 0 15px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px; flex-shrink: 0;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                            <input
+                                type="tel"
+                                name="phone_number"
+                                id="phone_number"
+                                placeholder="Nomer Ponsel (cth: 08123456789)"
+                                required
+                                minlength="9"
+                                maxlength="15"
+                                pattern="[0-9+\-\s]{9,15}"
+                                value="{{ old('phone_number') }}"
+                                oninput="validatePhone(this)"
+                                style="width: 100%; padding: 15px 0; border: none; background: transparent; outline: none; font-family: 'Nunito', sans-serif; font-size: 14px; color: var(--teks-gelap);"
+                            >
+                        </div>
+                        <div id="phone-counter" style="font-size: 11px; color: #aaa; padding: 2px 15px 6px; width: 100%; box-sizing: border-box; text-align: right;">0 / 15</div>
+                        @error('phone_number')
+                            <span style="font-size: 11px; color: #ff6b6b; padding: 0 15px 8px; display: block;">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div class="input-group">
@@ -56,5 +74,33 @@
     </div>
 
     <script src="{{ asset('js/script.js') }}"></script>
+    <script>
+        function validatePhone(input) {
+            // Hanya izinkan karakter angka, +, -, spasi
+            input.value = input.value.replace(/[^0-9+\-\s]/g, '');
+
+            const len = input.value.replace(/[^0-9]/g, '').length;
+            const counter = document.getElementById('phone-counter');
+
+            if (counter) {
+                counter.textContent = input.value.length + ' / 15';
+                if (len < 9) {
+                    counter.style.color = '#ff6b6b';
+                    counter.textContent = input.value.length + ' / 15 (min. 9 angka)';
+                } else if (input.value.length >= 15) {
+                    counter.style.color = '#ff6b6b';
+                    counter.textContent = '15 / 15 (maks)';
+                } else {
+                    counter.style.color = '#4caf50';
+                }
+            }
+        }
+
+        // Inisialisasi counter jika ada value awal (old input)
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('phone_number');
+            if (phoneInput && phoneInput.value) validatePhone(phoneInput);
+        });
+    </script>
 </body>
 </html>

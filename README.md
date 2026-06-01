@@ -159,3 +159,38 @@ Jika ingin menjalankannya secara manual di terminal terpisah:
     *   `resources/views/pages/user/` : Halaman Beranda, Keranjang, dan Profil Pelanggan.
     *   `resources/views/pages/admin/` : Panel Dashboard, Kategori, Produk, Pesanan, dan Manajemen Pengguna.
 *   `routes/web.php` : Rute navigasi web lengkap yang dilindungi middleware otentikasi dan pengecekan role admin.
+
+---
+
+## 🆕 Pembaruan & Fitur Baru (Terbaru)
+
+Dalam sesi pembaruan terbaru, beberapa penyempurnaan krusial telah diterapkan guna memperkaya performa, keamanan, dan fungsionalitas sistem:
+
+### 1. ⚙️ Kustomisasi Info Kontak & Footer (Admin Side)
+Admin kini memiliki kendali penuh atas informasi kontak butik serta seluruh tata letak **Footer** website secara dinamis melalui halaman **Admin Panel -> Pengaturan Butik**:
+*   **Info Kontak**: Alamat, jam operasional, alamat email, dan link embed Google Maps dapat dikustomisasi secara real-time tanpa menyentuh kode.
+*   **Tata Letak Footer**: Deskripsi singkat, nomor telepon tambahan footer, username Instagram, dan teks hak cipta (*copyright*) dapat disesuaikan secara dinamis.
+*   **Tautan Sosial Media Aktif**: Username Instagram yang dimasukkan oleh admin akan otomatis tersemat di bagian footer sebagai link aktif (*clickable link*) ke profil Instagram butik dengan efek hover warna cokelat utama khas yang premium.
+
+### 2. 🔍 Fitur Pencarian Data Admin (Search Bar)
+Untuk mempercepat pencarian data bagi administrator, fitur **Pencarian Real-time** terintegrasi telah ditambahkan pada 4 modul utama di sisi admin:
+*   **Kelola Kategori**: Cari kategori baju berdasarkan nama kategori.
+*   **Kelola Produk**: Cari baju berdasarkan nama produk atau isi deskripsi.
+*   **Kelola Transaksi**: Cari pesanan berdasarkan nama pembeli, catatan kustom ukuran, atau nama produk.
+*   **Kelola Pengguna**: Cari akun pelanggan berdasarkan nama, nomor telepon, atau email.
+*   *Dilengkapi dengan retensi pencarian berbasis query-string saat berpindah halaman (pagination).*
+
+### 3. 🛡️ Validasi Keamanan Nomor Telepon
+Untuk mencegah pendaftaran akun asal yang berlebihan atau pembaruan profil yang tidak valid:
+*   Pembatasan panjang nomor telepon diterapkan secara ketat dengan batas minimal **9 angka** dan maksimal **15 angka**.
+*   Sistem validasi Regex memastikan input nomor telepon hanya menerima karakter angka, simbol `+`, tanda hubung `-`, dan spasi.
+*   Disertai dengan fitur visual **JS Character Counter** dinamis pada form registrasi yang akan memandu pengguna secara real-time.
+
+### 4. 📱 Penyempurnaan Tampilan Responsif (Mobile View)
+*   **Hero Responsive CSS**: Menata ulang posisi hero banner di perangkat mobile. Gambar hero kini diposisikan secara seimbang di atas tombol *Call-to-Action (CTA)*, bukan disembunyikan seluruhnya ataupun ditaruh di bawah tombol yang dapat merusak alur visual pembeli.
+*   **Hapus Garis Tombol Profil**: Menghilangkan ornamen garis di dalam tombol simpan perubahan pada menu profil user untuk memberikan tampilan yang lebih minimalis dan elegan.
+*   **Reduksi Efek Blur Tepi HP**: Pada layar desktop, efek blur tepi `4px` dan reduksi opacity pada katalog carousel memberikan nuansa kedalaman visual. Namun pada mode responsif (lebar layar `<= 768px`), efek blur tersebut dikurangi secara dinamis menjadi maksimal **`1.2px`** dan opacity dipertahankan tinggi (maksimal reduksi `0.15`) agar katalog baju samping tetap cerah, tajam, dan mudah teridentifikasi oleh pengguna seluler.
+
+### 🗄️ Penyempurnaan Seeder Database (`SettingSeeder`)
+*   Seluruh parameter pengaturan dinamis, teks banner, profil tentang butik, hingga data footer di atas kini telah terintegrasi di dalam **`SettingSeeder.php`** dan terdaftar di **`DatabaseSeeder.php`**.
+*   Data pesanan dummy di **`OrderSeeder.php`** kini berhasil ter-seed secara sempurna karena urutan eksekusi seeder telah dikoreksi agar data user dibuat terlebih dahulu sebelum relasi order dipanggil.

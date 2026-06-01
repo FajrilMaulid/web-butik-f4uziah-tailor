@@ -6,12 +6,19 @@
     <!-- Hero Section -->
     <section id="hero" class="hero">
         <div class="hero-content">
-            <h1>Temukan Pesona<br>Elegan Anda</h1>
-            <p>Koleksi busana eksklusif yang dirancang dengan presisi untuk menonjolkan keindahan dan kepercayaan diri Anda di setiap momen berharga.</p>
+            @php
+                $dbHeroTitle = \App\Models\Setting::get('hero_title', 'Temukan Pesona<br>Elegan Anda');
+                $dbHeroSubtitle = \App\Models\Setting::get('hero_subtitle', 'Koleksi busana eksklusif yang dirancang dengan presisi untuk menonjolkan keindahan dan kepercayaan diri Anda di setiap momen berharga.');
+            @endphp
+            <h1>{!! $dbHeroTitle !!}</h1>
+            <p>{{ $dbHeroSubtitle }}</p>
             <a href="#search" class="btn-primary" style="text-decoration: none; text-align: center;">Jelajahi Koleksi</a>
         </div>
         <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800&auto=format&fit=crop" alt="Butik Interior">
+            @php
+                $dbHeroImg = \App\Models\Setting::get('hero_image');
+            @endphp
+            <img src="{{ $dbHeroImg ? asset('storage/' . $dbHeroImg) : 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800&auto=format&fit=crop' }}" alt="Butik Interior">
         </div>
     </section>
 
@@ -28,22 +35,36 @@
             <input type="text" name="search" class="search-bar" placeholder="Jelajahi koleksi eksklusif..." value="{{ request('search') }}">
         </form>
         <div class="filters">
-            <a href="{{ route('home', ['search' => request('search')]) }}#search" class="filter-btn {{ !request('category') ? 'active' : '' }}" style="text-decoration: none; display: inline-block;">Semua</a>
+            <a href="{{ route('home') }}#search" class="filter-btn {{ !request('category') ? 'active' : '' }}" style="text-decoration: none; display: inline-block;">Semua</a>
             @foreach($categories as $cat)
-                <a href="{{ route('home', ['category' => $cat->id, 'search' => request('search')]) }}#search" class="filter-btn {{ request('category') == $cat->id ? 'active' : '' }}" style="text-decoration: none; display: inline-block;">{{ $cat->name }}</a>
+                <a href="{{ route('home', ['category' => $cat->id]) }}#search" class="filter-btn {{ request('category') == $cat->id ? 'active' : '' }}" style="text-decoration: none; display: inline-block;">{{ $cat->name }}</a>
             @endforeach
         </div>
     </section>
 
     <!-- Katalog Grid -->
     <section id="katalog" class="catalog-container">
+        <!-- Tombol Arrow Kiri -->
+        <button class="catalog-arrow catalog-arrow-left" id="catalog-prev" aria-label="Sebelumnya">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+
+        <!-- Tombol Arrow Kanan -->
+        <button class="catalog-arrow catalog-arrow-right" id="catalog-next" aria-label="Selanjutnya">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+
         <div class="catalog-fade-left"></div>
         <div class="catalog-fade-right"></div>
         
-        <div class="catalog">
-            <div class="catalog-track">
+        <div class="catalog" id="catalog-scroll">
+            <div class="catalog-track" id="catalog-track">
                 @forelse($products as $product)
-                <div class="card">
+                <div class="card" data-index="{{ $loop->index }}">
                     <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop' }}" alt="{{ $product->name }}" style="width: 100%; height: 350px; object-fit: cover;">
                     <div class="card-body">
                         <h3>{{ $product->name }}</h3>
@@ -59,23 +80,37 @@
                     </div>
                 </div>
                 @empty
-                <div style="text-align: center; width: 100%; padding: 40px; color: #888;">
+                <div class="catalog-empty">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: #c4a882; margin-bottom: 12px;">
+                        <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H5v10a2 2 0 002 2h10a2 2 0 002-2V10h1.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"></path>
+                    </svg>
                     <p>Tidak ada produk yang ditemukan.</p>
                 </div>
                 @endforelse
             </div>
         </div>
+
+        <!-- Dot Indicators -->
+        <div class="catalog-dots" id="catalog-dots"></div>
     </section>
 
     <!-- Tentang Kami -->
     <section id="tentang" class="about">
         <div class="about-content">
-            <h2>Tentang Butik</h2>
-            <h3>Kisah Keanggunan Anda Dimulai di Sini</h3>
-            <p>Kami percaya bahwa busana bukan sekadar pakaian, melainkan cerminan karakter dan keanggunan sejati. Berdiri dengan dedikasi untuk menghadirkan kesempurnaan, setiap helai koleksi kami dirancang secara eksklusif menggunakan material premium pilihan.</p>
+            @php
+                $dbAboutTitle = \App\Models\Setting::get('about_title', 'Tentang Butik');
+                $dbAboutSubtitle = \App\Models\Setting::get('about_subtitle', 'Kisah Keanggunan Anda Dimulai di Sini');
+                $dbAboutDesc = \App\Models\Setting::get('about_description', 'Kami percaya bahwa busana bukan sekadar pakaian, melainkan cerminan karakter dan keanggunan sejati. Berdiri dengan dedikasi untuk menghadirkan kesempurnaan, setiap helai koleksi kami dirancang secara eksklusif menggunakan material premium pilihan.');
+            @endphp
+            <h2>{{ $dbAboutTitle }}</h2>
+            <h3>{{ $dbAboutSubtitle }}</h3>
+            <p>{{ $dbAboutDesc }}</p>
         </div>
         <div class="about-image">
-            <img src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=800&auto=format&fit=crop" alt="Tentang Butik">
+            @php
+                $dbAboutImg = \App\Models\Setting::get('about_image');
+            @endphp
+            <img src="{{ $dbAboutImg ? asset('storage/' . $dbAboutImg) : 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=800&auto=format&fit=crop' }}" alt="Tentang Butik">
         </div>
     </section>
 
@@ -85,11 +120,26 @@
             <h2>Kunjungi Butik Kami</h2>
             <p class="desc">Kami menanti kedatangan Anda untuk merasakan langsung kualitas premium dari setiap mahakarya kami.</p>
 
+            @php
+                $contactAddress = \App\Models\Setting::get('contact_address', 'Jl. Braga No. 123, Pusat Kota Bandung, Jawa Barat');
+                $contactHours   = \App\Models\Setting::get('contact_hours', 'Senin - Minggu | 10:00 - 20:00 WIB');
+                $contactEmail   = \App\Models\Setting::get('contact_email', 'f4uziahtailor@gmail.com');
+                $contactMapsUrl = \App\Models\Setting::get('contact_maps_url', 'https://maps.google.com/maps?q=Bandung&t=&z=13&ie=UTF8&iwloc=&output=embed');
+
+                $adminWa = \App\Models\Setting::get('admin_whatsapp', '6289601767100');
+                $adminWaClean = preg_replace('/[^0-9]/', '', $adminWa);
+                if (strpos($adminWaClean, '0') === 0) {
+                    $adminWaClean = '62' . substr($adminWaClean, 1);
+                }
+                $homepageWaMessage = "Halo Butik F4UZIAHTAILOR, saya ingin berkonsultasi mengenai pemesanan busana...";
+                $homepageWaUrl = "https://wa.me/" . $adminWaClean . "?text=" . urlencode($homepageWaMessage);
+            @endphp
+
             <div class="info-item">
                 <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                 <div>
                     <strong>Alamat:</strong><br>
-                    Jl. Braga No. 123, Pusat Kota Bandung, Jawa Barat
+                    {{ $contactAddress }}
                 </div>
             </div>
 
@@ -97,7 +147,7 @@
                 <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 <div>
                     <strong>Jam Operasi:</strong><br>
-                    Senin - Minggu | 10:00 - 20:00 WIB
+                    {{ $contactHours }}
                 </div>
             </div>
 
@@ -105,16 +155,17 @@
                 <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                 <div>
                     <strong>Email:</strong><br>
-                    f4uziahtailor@gmail.com
+                    {{ $contactEmail }}
                 </div>
             </div>
 
-            <button class="btn-wa">Hubungi Via WhatsApp</button>
+            <a href="{{ $homepageWaUrl }}" target="_blank" class="btn-wa" style="text-decoration: none; text-align: center; display: inline-block; box-sizing: border-box;">Hubungi Via WhatsApp</a>
         </div>
         <div class="map-container">
-            <iframe src="https://maps.google.com/maps?q=Bandung&t=&z=13&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="{{ $contactMapsUrl }}" allowfullscreen="" loading="lazy"></iframe>
         </div>
     </section>
+
 
     <div id="modal-detail" class="modal-overlay">
         <div class="modal-content">
@@ -153,6 +204,11 @@
                                 <button type="button" class="size-btn" data-size="3XL">3XL</button>
                             </div>
                             <p class="size-note">*Ukuran custom dapat diukur oleh sendiri yang akan di bantu oleh admin, atau bisa datang ke butik untuk diukur langsung</p>
+                        </div>
+
+                        <div class="notes-selector" style="margin-top: 15px; margin-bottom: 20px;">
+                            <p class="section-label" style="margin-bottom: 6px; font-weight: 600; color: #85644c; font-size: 14px;">Catatan Tambahan / Detail Ukuran Custom (Opsional):</p>
+                            <textarea name="notes" id="modal-notes-input" placeholder="Contoh: Lingkar dada 105cm, Panjang dress 135cm, atau warna kain khusus..." style="width: 100%; min-height: 80px; padding: 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; color: #333; background-color: #fdf8f0; outline: none; transition: 0.3s; resize: vertical; box-sizing: border-box;"></textarea>
                         </div>
 
                         <div class="modal-action-row">

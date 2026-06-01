@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // 1. Logika Filter Tombol (Tetap dipertahankan)
+    // 1. Logika Filter Tombol
     const filterBtns = document.querySelectorAll(".filter-btn");
     filterBtns.forEach((btn) => {
         btn.addEventListener("click", function () {
@@ -8,57 +8,318 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // 2. Logika Efek Blur Samping Murni (Tanpa Mengubah Gerakan/Ukuran Card)
-    const catalogContainer = document.querySelector(".catalog");
+    // ==========================================
+    // 2. SLIDER KATALOG (Arrow + Dot + Auto-Slide + Drag + Swipe)
+    // ==========================================
+    const catalogScroll = document.getElementById("catalog-scroll");
+    const catalogTrack = document.getElementById("catalog-track");
+    const prevBtn = document.getElementById("catalog-prev");
+    const nextBtn = document.getElementById("catalog-next");
+    const dotsContainer = document.getElementById("catalog-dots");
     const catalogCards = document.querySelectorAll(".card");
 
+    if (catalogScroll && catalogTrack && catalogCards.length > 0) {
+
+    const CARD_WIDTH = 300;
+    const CARD_GAP = 25;
+    const totalCards = catalogCards.length;
+    let currentIndex = 0;
+    let isTransitioning = false;
+
+    // ---- Buat Dot Indicators / Progress Bar ----
+    function buildDots() {
+        if (!dotsContainer) return;
+        dotsContainer.innerHTML = "";
+        if (totalCards <= 1) return;
+
+        if (totalCards <= 8) {
+            dotsContainer.classList.remove('is-progress');
+            catalogCards.forEach((_, i) => {
+                const dot = document.createElement("button");
+                dot.classList.add("catalog-dot");
+                dot.setAttribute("aria-label", `Slide ${i + 1}`);
+                if (i === 0) dot.classList.add("active");
+                dot.addEventListener("click", () => goToIndex(i));
+                dotsContainer.appendChild(dot);
+            });
+        } else {
+            dotsContainer.classList.add('is-progress');
+            
+            const progressTrack = document.createElement("div");
+            progressTrack.classList.add("catalog-progress-track");
+            
+            const progressBar = document.createElement("div");
+            progressBar.classList.add("catalog-progress-bar");
+            progressBar.id = "catalog-progress-bar";
+            progressTrack.appendChild(progressBar);
+
+            const counter = document.createElement("div");
+            counter.classList.add("catalog-progress-counter");
+            counter.id = "catalog-progress-counter";
+            counter.innerText = `1 / ${totalCards}`;
+
+            dotsContainer.appendChild(progressTrack);
+            dotsContainer.appendChild(counter);
+            
+            updateProgress(0);
+        }
+    }
+
+    function updateDots(index) {
+        if (!dotsContainer) return;
+        if (totalCards <= 8) {
+            const dots = dotsContainer.querySelectorAll(".catalog-dot");
+            dots.forEach((d, i) => d.classList.toggle("active", i === index));
+        } else {
+            updateProgress(index);
+        }
+    }
+
+    function updateProgress(index) {
+        const progressBar = document.getElementById("catalog-progress-bar");
+        const counter = document.getElementById("catalog-progress-counter");
+        if (progressBar && counter) {
+            const thumbWidth = 100 / totalCards;
+            progressBar.style.width = `${thumbWidth}%`;
+            progressBar.style.transform = `translateX(${index * 100}%)`;
+            counter.innerText = `${index + 1} / ${totalCards}`;
+        }
+    }
+
+    // ---- Hitung scroll target (card ditengahkan di viewport) ----
+    function getScrollTarget(index) {
+        const card = catalogCards[index];
+        if (!card) return 0;
+        const cardOffsetLeft = card.offsetLeft;
+        const containerWidth = catalogScroll.clientWidth;
+        const centered = cardOffsetLeft - (containerWidth / 2) + (CARD_WIDTH / 2);
+        return Math.max(0, centered);
+    }
+
+    function goToIndex(index, smooth = true) {
+        if (isTransitioning && smooth) return;
+        index = Math.max(0, Math.min(index, totalCards - 1));
+        currentIndex = index;
+        const target = getScrollTarget(index);
+        catalogScroll.scrollTo({ left: target, behavior: smooth ? "smooth" : "instant" });
+        updateDots(index);
+        updateArrows();
+        if (smooth) {
+            isTransitioning = true;
+            setTimeout(() => { isTransitioning = false; }, 500);
+        }
+    }
+
+    function updateArrows() {
+        if (!prevBtn || !nextBtn) return;
+        prevBtn.classList.toggle("disabled", currentIndex <= 0);
+        nextBtn.classList.toggle("disabled", currentIndex >= totalCards - 1);
+    }
+
+    // ---- Snap ke card terdekat (dinonaktifkan per permintaan) ----
+    // Auto-snap dihapus agar card tidak berpindah sendiri setelah drag/swipe
+
+    // ---- Sync index dari posisi scroll tanpa memindahkan card ----
+    function syncIndexFromScroll() {
+        const containerCenter = catalogScroll.scrollLeft + catalogScroll.clientWidth / 2;
+        let closestIndex = 0;
+        let closestDist = Infinity;
+        catalogCards.forEach((card, i) => {
+            const cardCenter = card.offsetLeft + CARD_WIDTH / 2;
+            const dist = Math.abs(cardCenter - containerCenter);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestIndex = i;
+            }
+        });
+        currentIndex = closestIndex;
+        updateDots(currentIndex);
+        updateArrows();
+    }
+
+    // ---- Arrow button events ----
+    if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+            goToIndex(currentIndex - 1);
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+            goToIndex(currentIndex + 1);
+        });
+    }
+
+    // ==========================================
+    // DRAG dengan Mouse (Desktop)
+    // ==========================================
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragScrollLeft = 0;
+    let hasDragged = false;
+    const DRAG_THRESHOLD = 5; // px minimum sebelum dianggap drag
+
+    catalogScroll.addEventListener("mousedown", (e) => {
+        // Jangan drag jika klik pada tombol detail
+        if (e.target.closest(".btn-detail")) return;
+        isDragging = true;
+        hasDragged = false;
+        dragStartX = e.pageX - catalogScroll.offsetLeft;
+        dragScrollLeft = catalogScroll.scrollLeft;
+        catalogScroll.classList.add("is-dragging");
+        catalogScroll.style.scrollBehavior = "auto";
+        e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const x = e.pageX - catalogScroll.offsetLeft;
+        const walk = (x - dragStartX) * 1.5; // faktor kecepatan drag
+        if (Math.abs(walk) > DRAG_THRESHOLD) hasDragged = true;
+        catalogScroll.scrollLeft = dragScrollLeft - walk;
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (!isDragging) return;
+        isDragging = false;
+        catalogScroll.classList.remove("is-dragging");
+        catalogScroll.style.scrollBehavior = "smooth";
+        // Update index berdasarkan posisi scroll saat ini (tanpa snap)
+        syncIndexFromScroll();
+    });
+
+    // Jika mouse keluar dari window saat drag
+    document.addEventListener("mouseleave", () => {
+        if (isDragging) {
+            isDragging = false;
+            catalogScroll.classList.remove("is-dragging");
+            catalogScroll.style.scrollBehavior = "smooth";
+            syncIndexFromScroll();
+        }
+    });
+
+    // ==========================================
+    // SWIPE dengan Jari (Mobile / Touch)
+    // ==========================================
+    let touchStartX = 0;
+    let touchStartScrollLeft = 0;
+    let isTouching = false;
+
+    catalogScroll.addEventListener("touchstart", (e) => {
+        isTouching = true;
+        touchStartX = e.touches[0].clientX;
+        touchStartScrollLeft = catalogScroll.scrollLeft;
+        catalogScroll.style.scrollBehavior = "auto";
+    }, { passive: true });
+
+    catalogScroll.addEventListener("touchmove", (e) => {
+        if (!isTouching) return;
+        const deltaX = touchStartX - e.touches[0].clientX;
+        catalogScroll.scrollLeft = touchStartScrollLeft + deltaX;
+    }, { passive: true });
+
+    catalogScroll.addEventListener("touchend", () => {
+        isTouching = false;
+        catalogScroll.style.scrollBehavior = "smooth";
+        // Update index tanpa snap otomatis
+        syncIndexFromScroll();
+    });
+
+    // ==========================================
+    // BLUR TEPI + SCROLL TRACKING
+    // ==========================================
     function applyEdgeBlur() {
-        const containerRect = catalogContainer.getBoundingClientRect();
+        if (!catalogScroll) return;
+        const containerRect = catalogScroll.getBoundingClientRect();
         const containerLeft = containerRect.left;
         const containerRight = containerRect.right;
+
+        // Cek mode responsif / mobile (lebar layar <= 768px)
+        const isResponsive = window.innerWidth <= 768;
+        const maxBlur = isResponsive ? 1.2 : 4; // Mengurangi blur maksimum di HP dari 4px menjadi 1.2px
+        const maxOpacityReduction = isResponsive ? 0.15 : 0.4; // Mengurangi transparansi tepi di HP dari 0.4 menjadi 0.15
 
         catalogCards.forEach((card) => {
             const cardRect = card.getBoundingClientRect();
             let distanceToEdge = 0;
 
-            // Hitung seberapa jauh kartu bergeser mendekati atau melewati tepi kiri/kanan layar kontainer
             if (cardRect.right < containerLeft + 120) {
-                // Mendekati/keluar ke kiri
                 distanceToEdge = containerLeft + 120 - cardRect.right;
             } else if (cardRect.left > containerRight - 120) {
-                // Mendekati/keluar ke kanan
                 distanceToEdge = cardRect.left - (containerRight - 120);
             }
 
-            // Normalisasi efek: progress akan naik dari 0 ke 1 seiring kartu menuju tepi samping
-            let progress = distanceToEdge / 180; // Sensitivitas area jangkauan blur (180px)
-            progress = Math.min(progress, 1);
-
-            // Hitung efek blur dan redup secara halus
-            const blurValue = progress * 4; // Maksimal blur 4px
-            const opacityValue = 1 - progress * 0.4; // Maksimal memudar hingga opacity 0.6
-
-            // Terapkan efek visual murni tanpa merusak tata letak fisik
-            card.style.filter = `blur(${blurValue}px)`;
-            card.style.opacity = opacityValue;
+            let progress = Math.min(distanceToEdge / 180, 1);
+            card.style.filter = `blur(${progress * maxBlur}px)`;
+            card.style.opacity = 1 - progress * maxOpacityReduction;
         });
     }
 
-    // Jalankan efek secara real-time setiap kali kontainer di-scroll
-    catalogContainer.addEventListener("scroll", () => {
+    catalogScroll.addEventListener("scroll", () => {
         window.requestAnimationFrame(applyEdgeBlur);
     });
-
-    // POSISI AWAL SEMULA: Halaman dimulai normal dari kiri (Card 1)
-    setTimeout(() => {
-        catalogContainer.scrollLeft = 0;
-        applyEdgeBlur();
-    }, 100);
 
     window.addEventListener("resize", () => {
         window.requestAnimationFrame(applyEdgeBlur);
     });
-});
+
+    // Cegah click event pada card jika habis drag
+    catalogTrack.addEventListener("click", (e) => {
+        if (hasDragged) {
+            e.stopPropagation();
+            e.preventDefault();
+            hasDragged = false;
+        }
+    }, true);
+
+    // ---- Inisialisasi ----
+    buildDots();
+    updateArrows();
+    setTimeout(() => {
+        catalogScroll.scrollLeft = 0;
+        applyEdgeBlur();
+    }, 150);
+    }
+
+    // ==========================================
+    // 3. RESPONSIVE MOBILE NAVBAR (BURGER MENU)
+    // ==========================================
+    const menuToggle = document.getElementById("menu-toggle");
+    const navMenu = document.getElementById("nav-menu");
+
+    if (menuToggle && navMenu) {
+        // Create backdrop dynamically
+        const backdrop = document.createElement("div");
+        backdrop.classList.add("nav-backdrop");
+        document.body.appendChild(backdrop);
+
+        function toggleMenu() {
+            menuToggle.classList.toggle("active");
+            navMenu.classList.toggle("active");
+            backdrop.classList.toggle("active");
+            
+            // Toggle body scroll lock when menu is active
+            if (navMenu.classList.contains("active")) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }
+        }
+
+        menuToggle.addEventListener("click", toggleMenu);
+        backdrop.addEventListener("click", toggleMenu);
+
+        // Close menu when clicking on nav links
+        const navLinks = navMenu.querySelectorAll(".nav-links a");
+        navLinks.forEach(link => {
+            link.addEventListener("click", () => {
+                if (navMenu.classList.contains("active")) {
+                    toggleMenu();
+                }
+            });
+        });
+    }
+
+}); // end DOMContentLoaded
 
 // Fitur Auto-Hide Preloader saat Seluruh Aset Selesai Dimuat
 window.addEventListener("load", function () {
@@ -127,6 +388,8 @@ detailButtons.forEach((btn) => {
         document.getElementById('modal-product-id').value = productId;
         document.getElementById('qty-value').textContent = "1";
         document.getElementById('modal-selected-qty').value = "1";
+        const notesInput = document.getElementById('modal-notes-input');
+        if (notesInput) notesInput.value = "";
         
         // Reset size selection ke Custom
         const sizeBtns = document.querySelectorAll('.size-btn');

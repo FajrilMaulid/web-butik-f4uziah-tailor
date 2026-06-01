@@ -17,54 +17,63 @@
                 @endif
 
                 @if(count($cart) > 0)
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid #eae0d5; color: var(--teks-paragraf);">
-                                <th style="padding: 15px 10px; text-align: left;">Produk</th>
-                                <th style="padding: 15px 10px; text-align: center;">Ukuran</th>
-                                <th style="padding: 15px 10px; text-align: center;">Harga</th>
-                                <th style="padding: 15px 10px; text-align: center;">Jumlah</th>
-                                <th style="padding: 15px 10px; text-align: right;">Total</th>
-                                <th style="padding: 15px 10px; text-align: center;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $totalSemua = 0; @endphp
-                            @foreach($cart as $cartId => $item)
-                                @php 
-                                    $total = $item['price'] * $item['quantity'];
-                                    $totalSemua += $total;
-                                @endphp
-                                <tr style="border-bottom: 1px solid #eae0d5;">
-                                    <td style="padding: 15px 10px;">
-                                        <div style="display: flex; align-items: center; gap: 15px;">
-                                            <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=100&auto=format&fit=crop' }}" alt="{{ $item['name'] }}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
-                                            <span style="font-weight: 600; color: var(--teks-gelap);">{{ $item['name'] }}</span>
-                                        </div>
-                                    </td>
-                                    <td style="padding: 15px 10px; text-align: center; font-weight: bold; color: var(--teks-gelap);">{{ $item['size'] }}</td>
-                                    <td style="padding: 15px 10px; text-align: center; color: var(--teks-gelap);">Rp {{ number_format($item['price'], 0, ',', '.') }}</td>
-                                    <td style="padding: 15px 10px; text-align: center; color: var(--teks-gelap);">{{ $item['quantity'] }}</td>
-                                    <td style="padding: 15px 10px; text-align: right; font-weight: 600; color: var(--cokelat-utama);">Rp {{ number_format($total, 0, ',', '.') }}</td>
-                                    <td style="padding: 15px 10px; text-align: center;">
-                                        <form action="{{ route('cart.remove') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="cart_id" value="{{ $cartId }}">
-                                            <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; padding: 5px;" title="Hapus Produk">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                            </button>
-                                        </form>
-                                    </td>
+                    <div class="cart-table-container">
+                        <table class="cart-table" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #eae0d5; color: var(--teks-paragraf);">
+                                    <th style="padding: 15px 10px; text-align: left;">Produk</th>
+                                    <th style="padding: 15px 10px; text-align: center;">Ukuran</th>
+                                    <th style="padding: 15px 10px; text-align: center;">Harga</th>
+                                    <th style="padding: 15px 10px; text-align: center;">Jumlah</th>
+                                    <th style="padding: 15px 10px; text-align: right;">Total</th>
+                                    <th style="padding: 15px 10px; text-align: center;">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @php $totalSemua = 0; @endphp
+                                @foreach($cart as $cartId => $item)
+                                    @php 
+                                        $total = $item['price'] * $item['quantity'];
+                                        $totalSemua += $total;
+                                    @endphp
+                                    <tr class="cart-row" style="border-bottom: 1px solid #eae0d5;">
+                                        <td class="cart-td cart-product" style="padding: 15px 10px;">
+                                            <div style="display: flex; align-items: center; gap: 15px;">
+                                                <img src="{{ $item['image'] ? asset('storage/' . $item['image']) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=100&auto=format&fit=crop' }}" alt="{{ $item['name'] }}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                                    <span style="font-weight: 600; color: var(--teks-gelap);">{{ $item['name'] }}</span>
+                                                    @if(!empty($item['notes']))
+                                                        <span style="font-size: 12px; color: #888; background-color: #fdf8f0; padding: 4px 8px; border-radius: 4px; border: 1px dashed #eae0d5; display: inline-block; max-width: 300px;">
+                                                            <strong>Catatan:</strong> {{ $item['notes'] }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="cart-td cart-size" data-label="Ukuran" style="padding: 15px 10px; text-align: center; font-weight: bold; color: var(--teks-gelap);">{{ $item['size'] }}</td>
+                                        <td class="cart-td cart-price" data-label="Harga" style="padding: 15px 10px; text-align: center; color: var(--teks-gelap);">Rp {{ number_format($item['price'], 0, ',', '.') }}</td>
+                                        <td class="cart-td cart-qty" data-label="Jumlah" style="padding: 15px 10px; text-align: center; color: var(--teks-gelap);">{{ $item['quantity'] }}</td>
+                                        <td class="cart-td cart-total-col" data-label="Total" style="padding: 15px 10px; text-align: right; font-weight: 600; color: var(--cokelat-utama);">Rp {{ number_format($total, 0, ',', '.') }}</td>
+                                        <td class="cart-td cart-action" style="padding: 15px 10px; text-align: center;">
+                                            <form action="{{ route('cart.remove') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="cart_id" value="{{ $cartId }}">
+                                                <button type="submit" style="background: none; border: none; color: #e74c3c; cursor: pointer; padding: 5px;" title="Hapus Produk">
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 30px;">
-                        <div style="font-size: 20px; color: var(--teks-gelap);">
+                    <div class="cart-summary" style="display: flex; justify-content: flex-end; align-items: center; gap: 30px;">
+                        <div class="cart-total-summary" style="font-size: 20px; color: var(--teks-gelap);">
                             Total Pembayaran: <strong style="color: var(--cokelat-utama); font-size: 24px;">Rp {{ number_format($totalSemua, 0, ',', '.') }}</strong>
                         </div>
-                        <form action="{{ route('cart.checkout') }}" method="POST">
+                        <form class="cart-checkout-form" action="{{ route('cart.checkout') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn-primary" style="font-size: 16px; padding: 15px 40px; cursor: pointer;">Checkout Sekarang</button>
                         </form>

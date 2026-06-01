@@ -60,7 +60,6 @@
     <div class="table-container">
         <div class="table-header">
             <h2>Transaksi Terbaru</h2>
-            <button class="btn-tambah">Cetak Laporan</button>
         </div>
         <table>
             <thead>
