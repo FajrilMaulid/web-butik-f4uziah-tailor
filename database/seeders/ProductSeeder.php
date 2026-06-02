@@ -26,9 +26,7 @@ class ProductSeeder extends Seeder
         $formal = $categories->where('slug', 'formal')->first();
 
         $products = [
-            // ============================================================
-            // GAMIS (10 produk)
-            // ============================================================
+            // Gamis (10 produk)
             [
                 'category_id' => $gamis->id ?? 1,
                 'name'        => 'Gamis Ayana Premium',
@@ -90,9 +88,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Gamis bahan satin duchess premium dengan kilap lembut, ideal untuk acara pernikahan dan pesta resmi.',
             ],
 
-            // ============================================================
-            // CASUAL (10 produk)
-            // ============================================================
+            // Casual (10 produk)
             [
                 'category_id' => $casual->id ?? 2,
                 'name'        => 'Kemeja Casual Pria Katun',
@@ -154,9 +150,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Cardigan rajut tipis yang versatile, mudah dilayer dengan berbagai pakaian dalam dan luar.',
             ],
 
-            // ============================================================
-            // FORMAL (10 produk)
-            // ============================================================
+            // Formal (10 produk)
             [
                 'category_id' => $formal->id ?? 3,
                 'name'        => 'Setelan Jas Pria Classic',

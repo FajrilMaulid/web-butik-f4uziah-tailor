@@ -76,7 +76,6 @@
     <script src="{{ asset('js/script.js') }}"></script>
     <script>
         function validatePhone(input) {
-            // Hanya izinkan karakter angka, +, -, spasi
             input.value = input.value.replace(/[^0-9+\-\s]/g, '');
 
             const len = input.value.replace(/[^0-9]/g, '').length;
@@ -96,7 +95,6 @@
             }
         }
 
-        // Inisialisasi counter jika ada value awal (old input)
         document.addEventListener('DOMContentLoaded', function() {
             const phoneInput = document.getElementById('phone_number');
             if (phoneInput && phoneInput.value) validatePhone(phoneInput);

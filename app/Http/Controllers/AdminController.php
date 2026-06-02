@@ -15,7 +15,7 @@ class AdminController extends Controller
         $totalProducts = Product::count();
         $pendingOrders = Order::where('status', 'menunggu')->count();
 
-        // Asumsikan pesanan selesai/diambil yang sudah lunas/diterima
+        // Pesanan selesai atau diambil yang sudah lunas/diterima
         $monthlyIncome = Order::whereMonth('created_at', date('m'))
                             ->whereYear('created_at', date('Y'))
                             ->whereIn('status', ['selesai', 'diambil'])
@@ -23,7 +23,7 @@ class AdminController extends Controller
 
         $recentOrders = Order::with(['user', 'product'])->latest()->take(5)->get();
 
-        // 1. Produk Terpopuler
+        // Produk Terpopuler
         $popularProducts = Order::select('product_id', \Illuminate\Support\Facades\DB::raw('count(*) as total_sold'))
             ->whereNotNull('product_id')
             ->groupBy('product_id')
@@ -32,7 +32,7 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        // 2. Statistik Penjualan Bulanan (Harian untuk Bulan Ini)
+        // Statistik Penjualan Bulanan
         $salesThisMonth = Order::select(
             \Illuminate\Support\Facades\DB::raw('DAY(created_at) as day'),
             \Illuminate\Support\Facades\DB::raw('COUNT(*) as total_orders')
@@ -44,7 +44,6 @@ class AdminController extends Controller
             ->orderBy('day')
             ->get();
 
-        // Dapatkan jumlah hari pada bulan ini
         $daysInMonth = (int)date('t');
         $chartData = array_fill(0, $daysInMonth, 0);
         foreach ($salesThisMonth as $sale) {
@@ -60,7 +59,7 @@ class AdminController extends Controller
         $adminWhatsapp = Setting::get('admin_whatsapp', '6289601767100');
         $heroImage = Setting::get('hero_image');
         $aboutImage = Setting::get('about_image');
-        
+
         $heroTitle = Setting::get('hero_title', 'Temukan Pesona<br>Elegan Anda');
         $heroSubtitle = Setting::get('hero_subtitle', 'Koleksi busana eksklusif yang dirancang dengan presisi untuk menonjolkan keindahan dan kepercayaan diri Anda di setiap momen berharga.');
         $aboutTitle = Setting::get('about_title', 'Tentang Butik');
@@ -108,14 +107,14 @@ class AdminController extends Controller
             'footer_copyright' => 'nullable|string|max:255',
         ]);
 
-        // 1. Update Nomor WhatsApp
+        // Update Nomor WhatsApp
         $phoneClean = preg_replace('/[^0-9]/', '', $request->admin_whatsapp);
         if (strpos($phoneClean, '0') === 0) {
             $phoneClean = '62' . substr($phoneClean, 1);
         }
         Setting::set('admin_whatsapp', $phoneClean);
 
-        // 2. Unggah Gambar Hero jika ada
+        // Update Gambar Hero
         if ($request->hasFile('hero_image')) {
             $oldHero = Setting::get('hero_image');
             if ($oldHero) {
@@ -125,7 +124,7 @@ class AdminController extends Controller
             Setting::set('hero_image', $path);
         }
 
-        // 3. Unggah Gambar Tentang Butik jika ada
+        // Update Gambar Tentang Butik
         if ($request->hasFile('about_image')) {
             $oldAbout = Setting::get('about_image');
             if ($oldAbout) {
@@ -135,20 +134,20 @@ class AdminController extends Controller
             Setting::set('about_image', $path);
         }
 
-        // 4. Update Teks Halaman Depan
+        // Update Teks Halaman Depan
         Setting::set('hero_title', $request->hero_title);
         Setting::set('hero_subtitle', $request->hero_subtitle);
         Setting::set('about_title', $request->about_title);
         Setting::set('about_subtitle', $request->about_subtitle);
         Setting::set('about_description', $request->about_description);
 
-        // 5. Update Info Kontak Butik
+        // Update Info Kontak Butik
         Setting::set('contact_address', $request->contact_address ?? 'Jl. Braga No. 123, Pusat Kota Bandung, Jawa Barat');
         Setting::set('contact_hours', $request->contact_hours ?? 'Senin - Minggu | 10:00 - 20:00 WIB');
         Setting::set('contact_email', $request->contact_email ?? 'f4uziahtailor@gmail.com');
         Setting::set('contact_maps_url', $request->contact_maps_url ?? 'https://maps.google.com/maps?q=Bandung&t=&z=13&ie=UTF8&iwloc=&output=embed');
 
-        // 6. Update Kustomisasi Footer
+        // Update Footer
         Setting::set('footer_description', $request->footer_description ?? 'Harmoni sempurna antara keindahan desain dan kenyamanan premium. Temukan koleksi busana yang memancarkan karakter autentik Anda sepanjang hari.');
         Setting::set('contact_instagram', $request->contact_instagram ?? '@f4uziah_tailor');
         Setting::set('contact_phone', $request->contact_phone ?? '+62 8234567891');

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Membuat User Admin
+        // Membuat Admin
         User::create([
             'name' => 'Admin F4uziahtailor',
             'email' => 'admin@tailor.com',
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '081234567890'
         ]);
 
-        // Membuat User Biasa
+        // Membuat User
         User::create([
             'name' => 'Fajril Maulid',
             'email' => 'fajril@gmail.com',

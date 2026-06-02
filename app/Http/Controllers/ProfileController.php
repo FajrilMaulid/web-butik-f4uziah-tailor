@@ -23,7 +23,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // 1. Validasi input form
+        // Validasi input form
         $request->validate([
             'name'         => 'required|string|max:255',
             'phone_number' => ['required', 'string', 'min:9', 'max:15', 'regex:/^[0-9+\-\s]+$/'],
@@ -38,15 +38,15 @@ class ProfileController extends Controller
         ]);
 
 
-        // 2. Update data dasar
+        // Update data dasar
         $user->name = $request->name;
         $user->phone_number = $request->phone_number;
         $user->email = $request->email;
         $user->address = $request->address;
 
-        // 3. Handle upload avatar jika ada
+        // Upload avatar
         if ($request->hasFile('avatar')) {
-            // Hapus avatar lama jika ada
+            // Hapus avatar lama
             if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
             }
@@ -55,15 +55,15 @@ class ProfileController extends Controller
             $user->avatar = $path;
         }
 
-        // 4. Cek apakah user mengisi kolom password baru
+        // Cek user mengisi kolom password baru
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
-        // 5. Simpan ke database
+        // Simpan ke database
         $user->save();
 
-        // 6. Kembali ke halaman profil dengan pesan sukses
+        // Kembali ke halaman profil
         return back()->with('success', 'Profil Anda berhasil diperbarui!');
     }
 }

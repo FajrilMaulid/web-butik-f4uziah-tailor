@@ -21,10 +21,10 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // Proses Pendaftaran User Baru
+    // Proses Register
     public function register(Request $request)
     {
-        // 1. Validasi Input
+        // Validasi Input
         $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => 'required|string|email|max:255|unique:users',
@@ -38,7 +38,7 @@ class AuthController extends Controller
         ]);
 
 
-        // 2. Simpan User ke Database
+        // Simpan Data User ke Database
         $user = User::create([
             'name'         => $request->name,
             'email'        => $request->email,
@@ -47,28 +47,27 @@ class AuthController extends Controller
             'role'         => 'user', // Default register adalah user biasa
         ]);
 
-        // 3. Login otomatis setelah daftar
+        // Login otomatis setelah daftar
         Auth::login($user);
 
-        // 4. Redirect ke Beranda
+        // Redirect ke Beranda
         return redirect('/')->with('success', 'Akun berhasil dibuat!');
     }
 
     // Proses Login
     public function login(Request $request)
     {
-        // 1. Validasi Input
+        // Validasi Input
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        // 2. Coba Autentikasi
-        // Argumen kedua 'true' digunakan jika checkbox "Ingat Saya" dicentang
+        // Autentikasi User
         if (Auth::attempt($credentials, $request->has('remember'))) {
             $request->session()->regenerate();
 
-            // 3. Pengecekan Role
+            // Pengecekan Role
             if (Auth::user()->role === 'admin') {
                 return redirect()->intended('/admin/dashboard');
             }
@@ -76,7 +75,6 @@ class AuthController extends Controller
             return redirect()->intended('/');
         }
 
-        // 4. Jika gagal
         return back()->withErrors([
             'email' => 'Email atau kata sandi yang Anda masukkan salah.',
         ])->onlyInput('email');

@@ -76,17 +76,17 @@ class OrderController extends Controller
         $quantity = 1;
         $additionalNotes = '';
 
-        // Mengurai Ukuran: Ukuran: [Ukuran],
+        // Mengurai Ukuran
         if (preg_match('/Ukuran:\s*([^,]+)/i', $notes, $matches)) {
             $size = trim($matches[1]);
         }
 
-        // Mengurai Jumlah: Jumlah: [Jumlah]
+        // Mengurai Jumlah
         if (preg_match('/Jumlah:\s*(\d+)/i', $notes, $matches)) {
             $quantity = (int) trim($matches[1]);
         }
 
-        // Mengurai Catatan Tambahan: . Catatan: [Catatan]
+        // Mengurai Catatan Tambahan
         if (preg_match('/\. Catatan:\s*(.*)/is', $notes, $matches)) {
             $additionalNotes = trim($matches[1]);
         }
@@ -96,7 +96,7 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
-        // Cek apakah ini update status cepat dari halaman index
+        // Cek update status
         if ($request->has('status') && !$request->has('user_id')) {
             $request->validate([
                 'status' => 'required|in:menunggu,proses,selesai,diambil,batal'
@@ -106,7 +106,7 @@ class OrderController extends Controller
             return back()->with('success', 'Status pesanan berhasil diperbarui.');
         }
 
-        // Jika ini update penuh dari halaman edit
+        // Update penuh dari halaman edit
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'product_id' => 'required|exists:products,id',
@@ -119,7 +119,7 @@ class OrderController extends Controller
         $product = Product::findOrFail($request->product_id);
         $totalPrice = $product->price * $request->quantity;
 
-        // Gabungkan ukuran dan kuantitas
+        // Gabungan ukuran dan kuantitas
         $notes = 'Ukuran: ' . $request->size . ', Jumlah: ' . $request->quantity;
         if ($request->filled('additional_notes')) {
             $notes .= '. Catatan: ' . $request->additional_notes;
@@ -166,7 +166,7 @@ class OrderController extends Controller
 
         $datePrinted = date('d-m-Y H:i:s');
 
-        // Render HTML dengan CSS khusus untuk styling Excel yang rapih
+        // Render HTML dengan CSS untuk styling Excel
         $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">

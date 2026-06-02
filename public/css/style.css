@@ -43,9 +43,7 @@ html {
     scroll-padding-top: 80px;
 }
 
-/* =========================================
-   PRELOADER / LOADING SCREEN
-========================================= */
+/* Preloader */
 #preloader {
     position: fixed;
     top: 0;
@@ -109,9 +107,7 @@ html {
     }
 }
 
-/* =========================================
-   NAVBAR
-========================================= */
+/* Navbar */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -222,13 +218,11 @@ html {
     transform: translateY(-1px);
 }
 
-/* =========================================
-   USER ACTIONS (SETELAH LOGIN)
-========================================= */
+/* User Action Setelah Login */
 .user-actions {
     display: flex;
     align-items: center;
-    gap: 12px; /* Jarak antara ikon keranjang dan profil */
+    gap: 12px;
 }
 
 .icon-btn {
@@ -239,7 +233,7 @@ html {
     height: 42px;
     background-color: var(--cokelat-utama);
     color: white;
-    border-radius: 10px; /* Membuat bentuk kotak dengan sudut membulat */
+    border-radius: 10px;
     transition: 0.3s;
     text-decoration: none;
 }
@@ -251,14 +245,11 @@ html {
 }
 
 .icon-btn svg {
-    /* Memastikan ikon tetap di tengah dan proporsional */
     width: 22px;
     height: 22px;
 }
 
-/* =========================================
-   HERO SECTION
-========================================= */
+/* Hero Section */
 .hero {
     display: flex;
     align-items: center;
@@ -308,9 +299,7 @@ html {
     object-fit: cover;
 }
 
-/* =========================================
-   SEARCH & FILTER
-========================================= */
+/* Search Dan Filter */
 .search-filter {
     text-align: center;
     padding: 60px 5% 20px;
@@ -319,13 +308,13 @@ html {
 
 .search-wrapper {
     position: relative;
-    max-width: 720px; /* Diperlebar agar terkesan premium */
+    max-width: 720px;
     margin: 0 auto 25px auto;
 }
 
 .search-icon {
     position: absolute;
-    left: 22px; /* Disesuaikan agar proposional dengan padding baru */
+    left: 22px;
     top: 50%;
     transform: translateY(-50%);
     color: #f0f0f0;
@@ -334,13 +323,13 @@ html {
 
 .search-bar {
     width: 100%;
-    padding: 16px 30px 16px 55px; /* Lebih tinggi dan lapang */
-    border-radius: 12px; /* Sudut melengkung premium */
+    padding: 16px 30px 16px 55px;
+    border-radius: 12px;
     border: none;
     background-color: var(--cokelat-utama);
     color: white;
     font-family: "Nunito", sans-serif;
-    font-size: 17px; /* Ukuran teks lebih besar */
+    font-size: 17px;
     outline: none;
     margin-bottom: 0;
     text-align: center;
@@ -381,9 +370,7 @@ html {
     color: white;
 }
 
-/* =========================================
-   KATALOG GRID
-========================================= */
+/* Katalog */
 .catalog-container {
     position: relative;
     width: 100%;
@@ -418,7 +405,7 @@ html {
     -webkit-mask-image: linear-gradient(to left, black 20%, transparent);
 }
 
-/* ---- TOMBOL ARROW NAVIGASI ---- */
+/* Tombol Arrow Navigasi */
 .catalog-arrow {
     position: absolute;
     top: calc(50% - 30px);
@@ -476,7 +463,7 @@ html {
     flex-shrink: 0;
 }
 
-/* ---- SCROLL CONTAINER ---- */
+/* Scroll Container */
 .catalog {
     width: 100%;
     overflow-x: auto;
@@ -484,7 +471,6 @@ html {
     -ms-overflow-style: none;
     scrollbar-width: none;
     scroll-behavior: smooth;
-    /* scroll-snap dinonaktifkan — navigasi dikendalikan oleh tombol arrow & drag */
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
@@ -509,7 +495,7 @@ html {
     box-sizing: border-box;
 }
 
-/* ---- DOT INDICATORS ---- */
+/* Dot Indicator */
 .catalog-dots {
     display: flex;
     justify-content: center;
@@ -540,7 +526,9 @@ html {
     height: 100%;
     background-color: var(--cokelat-utama);
     border-radius: 10px;
-    transition: transform 0.35s ease, width 0.35s ease;
+    transition:
+        transform 0.35s ease,
+        width 0.35s ease;
 }
 
 .catalog-progress-counter {
@@ -579,7 +567,7 @@ html {
     opacity: 0.75;
 }
 
-/* ---- EMPTY STATE ---- */
+/* Empty State */
 .catalog-empty {
     display: flex;
     flex-direction: column;
@@ -594,7 +582,7 @@ html {
     font-family: "Nunito", sans-serif;
 }
 
-/* ---- CARD ---- */
+/* Card */
 .card {
     background-color: var(--cokelat-gelap);
     border-radius: 12px;
@@ -603,7 +591,7 @@ html {
     flex-direction: column;
     padding: 0 !important;
     border: none;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     flex: 0 0 300px;
     width: 300px;
     transition:
@@ -676,9 +664,7 @@ html {
     transform: none;
 }
 
-/* =========================================
-   TENTANG & KONTAK
-========================================= */
+/* Tentang Dan Kontak */
 .about {
     display: flex;
     align-items: center;
@@ -774,9 +760,7 @@ html {
     border: none;
 }
 
-/* =========================================
-   FOOTER
-========================================= */
+/* Footer */
 .footer {
     background-color: var(--bg-krem);
     padding: 50px 5% 20px;
@@ -822,9 +806,7 @@ html {
     color: var(--teks-paragraf);
 }
 
-/* =========================================
-   HALAMAN AUTH (LOGIN & REGISTER)
-========================================= */
+/* Halaman Auth (Login Dan Register) */
 .auth-page {
     min-height: 100vh;
     display: flex;
@@ -890,9 +872,9 @@ html {
     display: flex;
     align-items: center;
     background-color: #fdfaf8;
-    border: 1px solid #dcdcdc; /* Garis diletakkan di kotak luar */
+    border: 1px solid #dcdcdc;
     border-radius: 10px;
-    padding: 0 15px; /* Ruang untuk ikon di kiri dan kanan */
+    padding: 0 15px;
     margin-bottom: 20px;
     transition: 0.3s;
 }
@@ -912,9 +894,9 @@ html {
 
 .input-group input {
     width: 100%;
-    padding: 15px 0; /* Padding atas bawah saja */
+    padding: 15px 0;
     border: none;
-    background: transparent; /* Transparan agar menyatu dengan kotak luar */
+    background: transparent;
     outline: none;
     font-family: "Nunito", sans-serif;
     font-size: 14px;
@@ -988,9 +970,7 @@ html {
     text-decoration: underline;
 }
 
-/* =========================================
-   MODAL / POP UP DETAIL BAJU
-========================================= */
+/* Modal Pop Up Produk */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1188,9 +1168,7 @@ html {
     background-color: var(--cokelat-gelap);
 }
 
-/* =========================================
-   MEDIA QUERIES (RESPONSIF UNTUK HP)
-========================================= */
+/* Media Responsive */
 @media (max-width: 768px) {
     .hero {
         flex-direction: column;
@@ -1304,7 +1282,7 @@ html {
         margin-top: 0;
     }
 
-    /* Arrow di mobile: lebih kecil */
+    /* Arrow Mobile */
     .catalog-arrow {
         width: 38px;
         height: 38px;
@@ -1328,9 +1306,7 @@ html {
     }
 }
 
-/* =========================================
-   HALAMAN PROFIL & HISTORY
-========================================= */
+/* Profile Dan History */
 .profile-section {
     padding: 60px 5%;
     display: flex;
@@ -1348,7 +1324,7 @@ html {
 .profile-tabs-header {
     display: flex;
     gap: 30px;
-    background-color: #f5eedf; /* Krem sedikit gelap untuk tab latar */
+    background-color: #f5eedf;
     padding: 20px 30px 0;
     border-radius: 15px 15px 0 0;
 }
@@ -1379,8 +1355,7 @@ html {
 }
 
 .profile-inner-card {
-    background-color: #fdfaf8; /* Latar putih krem */
-    border-radius: 12px;
+    background-color: #fdfaf8;
     padding: 40px;
     min-height: 400px;
 }
@@ -1406,7 +1381,7 @@ html {
     }
 }
 
-/* === TAB 1: AKUN SAYA === */
+/* Profile Saya */
 .profile-header-user {
     display: flex;
     justify-content: space-between;
@@ -1479,7 +1454,7 @@ html {
     width: 100%;
     padding: 18px 20px;
     border: none;
-    background-color: #ebe2d3; /* Krem gelap untuk input */
+    background-color: #ebe2d3;
     border-radius: 10px;
     font-family: "Nunito", sans-serif;
     font-size: 15px;
@@ -1529,7 +1504,7 @@ html {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #d35400; /* Warna kontras peringatan */
+    color: #d35400;
     font-weight: 700;
     font-size: 15px;
     padding: 10px;
@@ -1541,7 +1516,7 @@ html {
     background-color: #fcece3;
 }
 
-/* === TAB 2: HISTORY PEMESANAN === */
+/* History Pemesanan */
 .history-filters {
     display: flex;
     gap: 20px;
@@ -1572,7 +1547,7 @@ html {
     padding-right: 10px;
 }
 
-/* Kustomisasi scrollbar untuk history list */
+/*Scrollbar untuk history list */
 .history-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -1624,7 +1599,7 @@ html {
 }
 
 .text-orange {
-    color: var(--teks-gelap); /* Bisa diubah sesuai indikator status */
+    color: var(--teks-gelap);
 }
 
 .hist-price-info {
@@ -1655,7 +1630,7 @@ html {
     padding-right: 8px;
 }
 
-/* Kustomisasi scrollbar untuk cart table container */
+/* Scrollbar untuk cart table container */
 .cart-table-container::-webkit-scrollbar {
     width: 6px;
 }
@@ -1669,7 +1644,7 @@ html {
 
 /* Responsif Mobile */
 @media (max-width: 768px) {
-    /* Profile Section Mobile Refinements */
+    /* Profile Section Mobile */
     .profile-section {
         padding: 20px 10px;
     }
@@ -1807,7 +1782,7 @@ html {
         justify-content: flex-start;
         align-items: center;
         padding: 90px 30px 40px 30px;
-        box-shadow: -5px 0 25px rgba(0,0,0,0.08);
+        box-shadow: -5px 0 25px rgba(0, 0, 0, 0.08);
         transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         z-index: 1000;
         gap: 35px;
@@ -1850,21 +1825,21 @@ html {
         gap: 20px;
     }
 
-    /* Category Filter Slidable/Scrollable on Mobile */
+    /* Category Filter Slidable/Scrollable Untuk Mobile */
     .filters {
         justify-content: flex-start;
         flex-wrap: nowrap;
         overflow-x: auto;
         padding: 5px 5% 15px 5%;
-        margin: 0 -5%; /* Pull horizontally to touch the screen edges */
+        margin: 0 -5%;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Hide scrollbar for Firefox */
-        width: calc(100% + 10%); /* Account for negative margins */
+        scrollbar-width: none;
+        width: calc(100% + 10%);
         gap: 12px;
     }
 
     .filters::-webkit-scrollbar {
-        display: none; /* Hide scrollbar for Chrome/Safari */
+        display: none;
     }
 
     .filter-btn {
@@ -1872,7 +1847,7 @@ html {
         white-space: nowrap;
     }
 
-    /* Tidy up Contact Info Items on Mobile */
+    /* Contact Info Items Untuk Mobile */
     .info-item {
         display: flex;
         flex-direction: row;
@@ -1888,7 +1863,7 @@ html {
         margin-top: 3px;
     }
 
-    /* Shopping Cart Mobile Responsiveness */
+    /* Shopping Cart Mobile Responsive */
     .cart-table thead {
         display: none !important;
     }

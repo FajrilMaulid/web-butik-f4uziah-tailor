@@ -19,14 +19,14 @@
 
         <!-- Single Cohesive Panel Card -->
         <div class="form-container" style="background-color: var(--putih); padding: 35px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border-top: 4px solid var(--cokelat-utama); width: 100%; max-width: 1000px; margin: 0 auto; box-sizing: border-box;">
-            
+
             <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" style="margin: 0;">
                 @csrf
-                
+
                 <!-- Unified Flex Container for 3 Columns -->
                 <div style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%;">
-                    
-                    <!-- Kolom 1: Kontak & Teks Hero (Flex: 1fr) -->
+
+                    <!-- Kontak & Teks Hero (Flex: 1fr) -->
                     <div style="flex: 1 1 240px; display: flex; flex-direction: column;">
                         <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #eae0d5; padding-bottom: 10px; font-weight: bold;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-phone" viewBox="0 0 16 16" style="color: var(--cokelat-utama);">
@@ -60,7 +60,7 @@
                         </div>
                     </div>
 
-                    <!-- Kolom 2: Profil Tentang Butik (Flex: 1fr) -->
+                    <!-- Profil Tentang Butik (Flex: 1fr) -->
                     <div style="flex: 1 1 240px; display: flex; flex-direction: column;">
                         <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #eae0d5; padding-bottom: 10px; font-weight: bold;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16" style="color: var(--cokelat-utama);">
@@ -88,7 +88,7 @@
                         </div>
                     </div>
 
-                    <!-- Kolom 3: Media & Gambar (Flex: 1fr) -->
+                    <!-- Media & Gambar (Flex: 1fr) -->
                     <div style="flex: 1 1 240px; display: flex; flex-direction: column;">
                         <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #eae0d5; padding-bottom: 10px; font-weight: bold;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-image" viewBox="0 0 16 16" style="color: var(--cokelat-utama);">
@@ -128,7 +128,7 @@
                         </div>
                     </div>
 
-                    <!-- Kolom 4: Info Kontak Butik -->
+                    <!-- Info Kontak Butik -->
                     <div style="flex: 1 1 240px; display: flex; flex-direction: column;">
                         <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #eae0d5; padding-bottom: 10px; font-weight: bold;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="color: var(--cokelat-utama);">
@@ -164,7 +164,7 @@
                         </div>
                     </div>
 
-                    <!-- Kolom 5: Kustomisasi Footer -->
+                    <!-- Kustomisasi Footer -->
                     <div style="flex: 1 1 240px; display: flex; flex-direction: column;">
                         <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #eae0d5; padding-bottom: 10px; font-weight: bold;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="color: var(--cokelat-utama);">
