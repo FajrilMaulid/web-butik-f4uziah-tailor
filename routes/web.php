@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PaymentController;
+
 
 // Route untuk GUEST
 Route::middleware('guest')->group(function () {
@@ -13,10 +15,13 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.process');
 });
 
-// Route untuk USER
+// Route untuk semua user yang sudah login (termasuk admin)
 Route::middleware('auth')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
+// Route khusus user biasa (bukan admin)
+Route::middleware(['auth', 'role:user'])->group(function () {
     // Route profil
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -79,26 +84,43 @@ Route::middleware('auth')->group(function () {
             return back()->with('error', 'Keranjang belanja Anda kosong.');
         }
 
+        $orderIds = [];
         foreach ($cart as $item) {
             $orderNotes = 'Ukuran: ' . $item['size'] . ', Jumlah: ' . $item['quantity'];
             if (!empty($item['notes'])) {
                 $orderNotes .= '. Catatan: ' . $item['notes'];
             }
 
-            \App\Models\Order::create([
+            $order = \App\Models\Order::create([
                 'user_id' => auth()->id(),
                 'product_id' => $item['product_id'],
                 'total_price' => $item['price'] * $item['quantity'],
-                'status' => 'menunggu',
+                'status' => 'menunggu_pembayaran',
+                'payment_status' => 'unpaid',
                 'notes' => $orderNotes,
             ]);
+            $orderIds[] = $order->id;
         }
 
         session()->forget('cart');
 
-        return redirect()->route('profile')->with('success', 'Checkout berhasil! Pesanan Anda sedang kami tinjau.');
+        // Redirect ke halaman info pembayaran untuk order pertama
+        $firstOrderId = $orderIds[0];
+        return redirect()->route('payment.info', ['order' => $firstOrderId])
+            ->with('success', 'Checkout berhasil! Silakan lakukan pembayaran.');
     })->name('cart.checkout');
+
+    // Route Pembayaran
+    Route::get('/payment/info/{order}', [PaymentController::class, 'info'])->name('payment.info');
+    Route::post('/payment/upload/{order}', [PaymentController::class, 'upload'])->name('payment.upload');
+}); // end role:user group
+
+// Route Konfirmasi Pembayaran Admin (bagian dari admin group)
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::post('/admin/payment/confirm/{order}', [PaymentController::class, 'confirm'])->name('payment.confirm');
+    Route::post('/admin/payment/reject/{order}', [PaymentController::class, 'reject'])->name('payment.reject');
 });
+
 
 // Route untuk ADMIN
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {

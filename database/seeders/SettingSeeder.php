@@ -39,6 +39,14 @@ class SettingSeeder extends Seeder
             'contact_instagram' => '@f4uziah_tailor',
             'contact_phone' => '+62 8234567891',
             'footer_copyright' => 'Copyright © F4uziah Tailor 2026',
+
+            // Rekening Bank Pembayaran
+            'bank_name' => 'BCA',
+            'bank_account_number' => '1234567890',
+            'bank_account_name' => 'F4UZIAH TAILOR',
+            'bank_name_2' => 'GoPay',
+            'bank_account_number_2' => '089601767100',
+            'bank_account_name_2' => 'F4UZIAH TAILOR',
         ];
 
         foreach ($settings as $key => $value) {

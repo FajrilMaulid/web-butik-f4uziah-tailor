@@ -9,7 +9,14 @@
             <div class="number">{{ $totalProducts }}</div>
         </div>
         <div class="stat-card">
-            <h3>Pesanan Menunggu</h3>
+            <h3>Menunggu Konfirmasi Bayar</h3>
+            <div class="number" style="color: {{ $pendingPayments > 0 ? '#f97316' : 'inherit' }}">{{ $pendingPayments }}</div>
+            @if($pendingPayments > 0)
+            <a href="{{ route('orders.index') }}" style="font-size:12px; color:#f97316; font-weight:700; text-decoration:none;">→ Lihat Bukti Transfer</a>
+            @endif
+        </div>
+        <div class="stat-card">
+            <h3>Pesanan Diproses</h3>
             <div class="number">{{ $pendingOrders }}</div>
         </div>
         <div class="stat-card">
@@ -80,7 +87,17 @@
                         <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                         <td>
                             @php
+                                $statusLabel = match($order->status) {
+                                    'menunggu_pembayaran' => 'Belum Bayar',
+                                    'menunggu' => 'Menunggu Konfirmasi',
+                                    'proses' => 'Diproses',
+                                    'selesai' => 'Selesai',
+                                    'diambil' => 'Diambil',
+                                    'batal' => 'Batal',
+                                    default => ucfirst($order->status)
+                                };
                                 $statusClass = match($order->status) {
+                                    'menunggu_pembayaran' => 'status-pending',
                                     'menunggu' => 'status-pending',
                                     'proses' => 'status-pending',
                                     'selesai' => 'status-lunas',
@@ -89,7 +106,7 @@
                                     default => 'status-pending'
                                 };
                             @endphp
-                            <span class="status-badge {{ $statusClass }}" style="text-transform: capitalize;">{{ $order->status }}</span>
+                            <span class="status-badge {{ $statusClass }}">{{ $statusLabel }}</span>
                         </td>
                     </tr>
                 @empty

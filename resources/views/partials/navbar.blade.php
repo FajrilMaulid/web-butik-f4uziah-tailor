@@ -20,6 +20,11 @@
 
         @auth
             <div class="user-actions">
+                @if(Auth::user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}" class="btn-login">Dashboard Admin</a>
+                @endif
+
+                @if(Auth::user()->role !== 'admin')
                 <a href="/cart" class="icon-btn" title="Keranjang">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="21" r="1"></circle>
@@ -27,7 +32,9 @@
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                     </svg>
                 </a>
+                @endif
 
+                @if(Auth::user()->role !== 'admin')
                 <a href="/profile" class="icon-btn" title="Profil Saya" style="{{ Auth::user()->avatar ? 'width: 42px; height: 42px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--cokelat-utama); padding: 0;' : '' }}">
                     @if(Auth::user()->avatar)
                         <img src="{{ asset('storage/' . Auth::user()->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -38,7 +45,9 @@
                         </svg>
                     @endif
                 </a>
+                @endif
             </div>
         @endauth
+
     </div>
 </nav>

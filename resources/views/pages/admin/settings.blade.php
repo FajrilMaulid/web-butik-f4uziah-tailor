@@ -199,6 +199,57 @@
 
                 </div>
 
+                {{-- Section Rekening Bank --}}
+                <hr style="border: 0; border-top: 1px solid #eae0d5; margin: 30px 0 25px 0; width: 100%;">
+
+                <div style="width: 100%;">
+                    <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #eae0d5; padding-bottom: 10px; font-weight: bold;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="color: var(--cokelat-utama);">
+                            <path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.371 2.371 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976z"/>
+                            <path fill-rule="evenodd" d="M1.5 8.5A.5.5 0 0 1 2 8h1a.5.5 0 0 1 0 1H2a.5.5 0 0 1-.5-.5m10.5 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/>
+                            <path d="M1.5 11a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+                        </svg>
+                        Informasi Rekening Bank Pembayaran
+                    </h3>
+                    <p style="color: #888; font-size: 12px; margin: -12px 0 20px 0;">Info rekening ini akan ditampilkan kepada pelanggan setelah melakukan checkout.</p>
+
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                        {{-- Rekening Utama --}}
+                        <div style="flex: 1 1 300px;">
+                            <p style="font-weight: 700; font-size: 13px; color: var(--cokelat-gelap); margin-bottom: 14px;">Rekening Utama</p>
+                            <div class="form-group" style="margin-bottom: 14px;">
+                                <label for="bank_name" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--teks-gelap); font-size: 13px;">Nama Bank</label>
+                                <input type="text" name="bank_name" id="bank_name" value="{{ old('bank_name', $bankName) }}" placeholder="Contoh: BCA, BRI, Mandiri" style="width: 100%; padding: 10px 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; box-sizing: border-box;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 14px;">
+                                <label for="bank_account_number" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--teks-gelap); font-size: 13px;">Nomor Rekening</label>
+                                <input type="text" name="bank_account_number" id="bank_account_number" value="{{ old('bank_account_number', $bankAccountNumber) }}" placeholder="Contoh: 1234567890" style="width: 100%; padding: 10px 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; box-sizing: border-box;">
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_account_name" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--teks-gelap); font-size: 13px;">Atas Nama</label>
+                                <input type="text" name="bank_account_name" id="bank_account_name" value="{{ old('bank_account_name', $bankAccountName) }}" placeholder="Contoh: F4UZIAH TAILOR" style="width: 100%; padding: 10px 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; box-sizing: border-box;">
+                            </div>
+                        </div>
+
+                        {{-- Rekening Kedua (Opsional) --}}
+                        <div style="flex: 1 1 300px;">
+                            <p style="font-weight: 700; font-size: 13px; color: var(--cokelat-gelap); margin-bottom: 14px;">Rekening Kedua <span style="font-weight: 400; color: #999;">(Opsional)</span></p>
+                            <div class="form-group" style="margin-bottom: 14px;">
+                                <label for="bank_name_2" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--teks-gelap); font-size: 13px;">Nama Bank</label>
+                                <input type="text" name="bank_name_2" id="bank_name_2" value="{{ old('bank_name_2', $bankName2) }}" placeholder="Contoh: GoPay, OVO, Dana" style="width: 100%; padding: 10px 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; box-sizing: border-box;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 14px;">
+                                <label for="bank_account_number_2" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--teks-gelap); font-size: 13px;">Nomor Rekening / No. HP</label>
+                                <input type="text" name="bank_account_number_2" id="bank_account_number_2" value="{{ old('bank_account_number_2', $bankAccountNumber2) }}" placeholder="Contoh: 08123456789" style="width: 100%; padding: 10px 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; box-sizing: border-box;">
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_account_name_2" style="display: block; margin-bottom: 5px; font-weight: bold; color: var(--teks-gelap); font-size: 13px;">Atas Nama</label>
+                                <input type="text" name="bank_account_name_2" id="bank_account_name_2" value="{{ old('bank_account_name_2', $bankAccountName2) }}" placeholder="Contoh: F4UZIAH TAILOR" style="width: 100%; padding: 10px 12px; border: 1px solid #eae0d5; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 13px; box-sizing: border-box;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Cohesive Bottom Section inside the Card -->
                 <hr style="border: 0; border-top: 1px solid #eae0d5; margin: 30px 0 20px 0; width: 100%;">
 
@@ -210,3 +261,4 @@
         </div>
     </div>
 @endsection
+

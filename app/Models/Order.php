@@ -12,8 +12,10 @@ class Order extends Model
         'total_price',
         'status',
         'notes',
-        'reference_image'
+        'reference_image',
+        'payment_status',
     ];
+
 
     public function user()
     {

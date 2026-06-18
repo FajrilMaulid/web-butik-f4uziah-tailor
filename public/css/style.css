@@ -664,6 +664,73 @@ html {
     transform: none;
 }
 
+/* Badge admin untuk card produk */
+.btn-admin-view {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 700;
+    font-family: "Nunito", sans-serif;
+    font-size: 13px;
+    background-color: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    border: 1.5px dashed rgba(255,255,255,0.35);
+    letter-spacing: 0.5px;
+    cursor: default;
+    margin-top: auto;
+    box-sizing: border-box;
+}
+
+/* Notifikasi admin di dalam modal */
+.admin-order-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+    padding: 30px 20px;
+    background-color: #fdf3e7;
+    border: 1.5px solid #e8d5b7;
+    border-radius: 12px;
+    margin-top: 10px;
+    color: var(--cokelat-gelap);
+}
+
+.admin-order-notice svg {
+    color: var(--cokelat-utama);
+    flex-shrink: 0;
+}
+
+.admin-order-notice p {
+    font-size: 14px;
+    color: var(--teks-paragraf);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.btn-go-admin {
+    display: inline-block;
+    background-color: var(--cokelat-utama);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: "Nunito", sans-serif;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 4px;
+}
+
+.btn-go-admin:hover {
+    background-color: var(--cokelat-gelap);
+    transform: translateY(-2px);
+}
+
+
 /* Tentang Dan Kontak */
 .about {
     display: flex;

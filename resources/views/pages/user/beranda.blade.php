@@ -69,6 +69,9 @@
                     <div class="card-body">
                         <h3>{{ $product->name }}</h3>
                         <p>Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                        @if(auth()->check() && auth()->user()->role === 'admin')
+                            <span class="btn-admin-view">Produk Aktif</span>
+                        @else
                         <button class="btn-detail" 
                                 data-id="{{ $product->id }}"
                                 data-name="{{ $product->name }}" 
@@ -77,6 +80,7 @@
                                 data-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=400&auto=format&fit=crop' }}">
                             Detail Baju
                         </button>
+                        @endif
                     </div>
                 </div>
                 @empty
@@ -186,6 +190,17 @@
                     <p class="modal-price" id="modal-price-display">Rp.300.000</p>
                     <p class="modal-desc" id="modal-desc-display">"Gamis berpotongan A-line dari Premium Linen yang sejuk, jatuh alami, dan memancarkan keanggunan minimalis."</p>
 
+                    @if(auth()->check() && auth()->user()->role === 'admin')
+                    <div class="admin-order-notice">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p>Anda login sebagai <strong>Admin</strong>. Pemesanan hanya dapat dilakukan oleh pelanggan.</p>
+                        <a href="{{ route('admin.dashboard') }}" class="btn-go-admin">Ke Dashboard Admin</a>
+                    </div>
+                    @else
                     <form action="{{ route('cart.add') }}" method="POST" id="form-add-cart">
                         @csrf
                         <input type="hidden" name="product_id" id="modal-product-id">
@@ -228,6 +243,7 @@
                             <button type="submit" class="btn-add-cart">Tambah Ke Keranjang</button>
                         </div>
                     </form>
+                    @endif
                 </div>
             </div>
         </div>

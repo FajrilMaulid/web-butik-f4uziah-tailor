@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('product_id')->nullable()->constrained('products')->onDelete('set null');
             $table->decimal('total_price', 15, 2)->default(0);
-            $table->enum('status', ['menunggu', 'proses', 'selesai', 'diambil', 'batal'])->default('menunggu');
+            $table->enum('status', ['menunggu_pembayaran', 'menunggu', 'proses', 'selesai', 'diambil', 'batal'])->default('menunggu_pembayaran');
             $table->text('notes')->nullable();
             $table->string('reference_image')->nullable();
             $table->timestamps();

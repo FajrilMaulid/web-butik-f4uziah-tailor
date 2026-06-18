@@ -72,7 +72,8 @@
 
                         <div class="history-filters">
                             <button class="filter-hist-btn active" onclick="filterHistory('semua', this)">Semua</button>
-                            <button class="filter-hist-btn" onclick="filterHistory('menunggu', this)">Belum Dibayar</button>
+                            <button class="filter-hist-btn" onclick="filterHistory('menunggu_pembayaran', this)">Belum Bayar</button>
+                            <button class="filter-hist-btn" onclick="filterHistory('menunggu', this)">Menunggu Konfirmasi</button>
                             <button class="filter-hist-btn" onclick="filterHistory('proses', this)">Dikerjakan</button>
                             <button class="filter-hist-btn" onclick="filterHistory('selesai', this)">Selesai</button>
                         </div>
@@ -89,7 +90,8 @@
                             @forelse($orders as $order)
                                 @php
                                     $statusText = match($order->status) {
-                                        'menunggu' => 'Belum Dibayar',
+                                        'menunggu_pembayaran' => 'Belum Bayar',
+                                        'menunggu' => 'Menunggu Konfirmasi',
                                         'proses' => 'Dikerjakan',
                                         'selesai' => 'Selesai',
                                         'diambil' => 'Sudah Diambil',
@@ -98,6 +100,7 @@
                                     };
                                     
                                     $statusColor = match($order->status) {
+                                        'menunggu_pembayaran' => '#f97316',
                                         'menunggu' => '#f59e0b',
                                         'proses' => '#3b82f6',
                                         'selesai' => '#10b981',
@@ -111,10 +114,39 @@
                                     <div class="hist-details">
                                         <h3>{{ $order->product->name ?? 'Produk Terhapus' }}</h3>
                                         <p class="hist-size">{{ $order->notes }}</p>
-                                        <p class="hist-status">Status Pesanan: <span style="color: {{ $statusColor }}; font-weight: bold;">{{ $statusText }}</span></p>
+                                        <p class="hist-status">Status: <span style="color: {{ $statusColor }}; font-weight: bold;">{{ $statusText }}</span></p>
+
+                                        {{-- Upload Bukti Transfer (jika belum bayar) --}}
+                                        @if($order->status === 'menunggu_pembayaran')
+                                        <div class="upload-proof-area">
+                                            <a href="{{ route('payment.info', $order->id) }}" class="btn-payment-info">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                                Lihat Info Rekening
+                                            </a>
+                                            <form action="{{ route('payment.upload', $order->id) }}" method="POST" enctype="multipart/form-data" class="upload-form">
+                                                @csrf
+                                                <label class="btn-upload-proof" for="proof-{{ $order->id }}">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
+                                                    Upload Bukti Transfer
+                                                </label>
+                                                <input type="file" id="proof-{{ $order->id }}" name="payment_proof" accept="image/*" style="display:none;" onchange="this.form.submit()">
+                                            </form>
+                                        </div>
+                                        @endif
+
+                                        {{-- Preview bukti yang sudah diupload --}}
+                                        @if($order->status === 'menunggu' && $order->reference_image)
+                                        <div class="proof-uploaded-info">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            Bukti transfer sudah dikirim — menunggu verifikasi admin.
+                                        </div>
+                                        @endif
                                     </div>
                                     <div class="hist-price-info">
                                         <p class="hist-total">Total: <strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong></p>
+                                        @if($order->status === 'menunggu_pembayaran')
+                                        <span class="badge-unpaid">Segera Bayar</span>
+                                        @endif
                                     </div>
                                 </div>
                             @empty
@@ -186,4 +218,77 @@
             }
         }
     </script>
+
+    <style>
+        .upload-proof-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-payment-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: 1.5px solid var(--cokelat-utama);
+            color: var(--cokelat-utama);
+            padding: 7px 13px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .btn-payment-info:hover {
+            background: var(--cokelat-utama);
+            color: white;
+        }
+        .btn-upload-proof {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--cokelat-utama);
+            color: white;
+            padding: 7px 13px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-upload-proof:hover {
+            background: var(--cokelat-gelap);
+        }
+        .proof-uploaded-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            background: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Nunito', sans-serif;
+        }
+        .badge-unpaid {
+            display: inline-block;
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            color: #c2410c;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 6px;
+            font-family: 'Nunito', sans-serif;
+        }
+    </style>
 @endsection
+

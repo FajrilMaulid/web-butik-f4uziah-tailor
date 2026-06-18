@@ -40,7 +40,7 @@ class OrderController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'size' => 'required|string|max:50',
-            'status' => 'required|in:menunggu,proses,selesai,diambil,batal',
+            'status' => 'required|in:menunggu_pembayaran,menunggu,proses,selesai,diambil,batal',
             'additional_notes' => 'nullable|string|max:1000',
         ]);
 
@@ -99,7 +99,7 @@ class OrderController extends Controller
         // Cek update status
         if ($request->has('status') && !$request->has('user_id')) {
             $request->validate([
-                'status' => 'required|in:menunggu,proses,selesai,diambil,batal'
+                'status' => 'required|in:menunggu_pembayaran,menunggu,proses,selesai,diambil,batal'
             ]);
 
             $order->update(['status' => $request->status]);
@@ -112,7 +112,8 @@ class OrderController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'size' => 'required|string|max:50',
-            'status' => 'required|in:menunggu,proses,selesai,diambil,batal',
+            'status' => 'required|in:menunggu_pembayaran,menunggu,proses,selesai,diambil,batal',
+
             'additional_notes' => 'nullable|string|max:1000',
         ]);
 

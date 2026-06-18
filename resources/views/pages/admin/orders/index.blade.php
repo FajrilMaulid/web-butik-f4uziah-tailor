@@ -105,6 +105,7 @@
                             <td>
                                 @php
                                     $statusColor = match($order->status) {
+                                        'menunggu_pembayaran' => '#f97316',
                                         'menunggu' => '#f59e0b',
                                         'proses' => '#3b82f6',
                                         'selesai' => '#10b981',
@@ -112,9 +113,18 @@
                                         'batal' => '#ef4444',
                                         default => '#6b7280'
                                     };
+                                    $statusLabel = match($order->status) {
+                                        'menunggu_pembayaran' => 'Belum Bayar',
+                                        'menunggu' => 'Menunggu Konfirmasi',
+                                        'proses' => 'Proses',
+                                        'selesai' => 'Selesai',
+                                        'diambil' => 'Diambil',
+                                        'batal' => 'Batal',
+                                        default => ucfirst($order->status)
+                                    };
                                 @endphp
-                                <span style="background-color: {{ $statusColor }}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; text-transform: capitalize;">
-                                    {{ $order->status }}
+                                <span style="background-color: {{ $statusColor }}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; white-space: nowrap;">
+                                    {{ $statusLabel }}
                                 </span>
                             </td>
                             <td>{{ \Illuminate\Support\Str::limit($order->notes, 30) ?: '-' }}</td>
@@ -124,7 +134,8 @@
                                         @csrf
                                         @method('PUT')
                                         <select name="status" style="padding: 5px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Nunito', sans-serif;">
-                                            <option value="menunggu" {{ $order->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                                            <option value="menunggu_pembayaran" {{ $order->status == 'menunggu_pembayaran' ? 'selected' : '' }}>Belum Bayar</option>
+                                            <option value="menunggu" {{ $order->status == 'menunggu' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
                                             <option value="proses" {{ $order->status == 'proses' ? 'selected' : '' }}>Proses</option>
                                             <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
                                             <option value="diambil" {{ $order->status == 'diambil' ? 'selected' : '' }}>Diambil</option>
@@ -132,6 +143,17 @@
                                         </select>
                                         <button type="submit" class="btn-edit" style="padding: 6px 12px;">Update</button>
                                     </form>
+
+                                    {{-- Tombol Konfirmasi/Tolak Bukti Transfer --}}
+                                    @if($order->reference_image)
+                                    <div style="display: flex; gap: 5px; margin-top: 4px;">
+                                        <button type="button"
+                                            onclick="showProofModal('{{ asset('storage/' . $order->reference_image) }}', '{{ '#ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) }}', {{ $order->id }}, '{{ $order->payment_status }}')"
+                                            style="background: #3b82f6; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; font-family: 'Nunito', sans-serif;">
+                                            Lihat Bukti
+                                        </button>
+                                    </div>
+                                    @endif
                                     <div style="display: flex; gap: 5px;">
                                         <a href="{{ route('orders.edit', $order->id) }}" class="btn-edit" style="background-color: #3b82f6; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; display: inline-block;">Edit Detail</a>
                                         
@@ -156,4 +178,82 @@
             {{ $orders->links() }}
         </div>
     </div>
+
+{{-- Modal Preview Bukti Transfer --}}
+<div id="proof-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:16px; padding:28px; max-width:520px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3); position:relative;">
+        <button onclick="closeProofModal()" style="position:absolute; top:14px; right:14px; background:none; border:none; cursor:pointer; font-size:20px; color:#666;">✕</button>
+        <h3 style="font-family:'Lora',serif; color:var(--cokelat-gelap); margin-bottom:6px; font-size:18px;" id="proof-modal-title">Bukti Transfer</h3>
+        <p style="color:#888; font-size:13px; margin-bottom:16px;" id="proof-modal-order"></p>
+        <div style="border-radius:10px; overflow:hidden; border:1px solid #eae0d5; margin-bottom:20px; text-align:center;">
+            <img id="proof-modal-img" src="" alt="Bukti Transfer" style="max-width:100%; max-height:380px; object-fit:contain;">
+        </div>
+        <div id="modal-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <form id="form-confirm" method="POST" style="flex:1;">
+                @csrf
+                <button type="submit" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; font-weight:700; font-family:'Nunito',sans-serif; font-size:14px; cursor:pointer;">
+                    Konfirmasi Lunas
+                </button>
+            </form>
+            <form id="form-reject" method="POST" style="flex:1;" onsubmit="return confirm('Yakin ingin menolak pembayaran ini?');">
+                @csrf
+                <button type="submit" style="width:100%; background:#ef4444; color:white; border:none; padding:12px; border-radius:8px; font-weight:700; font-family:'Nunito',sans-serif; font-size:14px; cursor:pointer;">
+                    Tolak Pembayaran
+                </button>
+            </form>
+        </div>
+        <div id="modal-status-text" style="display:none; text-align:center; padding:12px; border-radius:8px; font-weight:700; font-family:'Nunito',sans-serif; font-size:14px;"></div>
+    </div>
+</div>
+
+<script>
+function showProofModal(imgUrl, orderId, orderDbId, paymentStatus) {
+    document.getElementById('proof-modal-img').src = imgUrl;
+    document.getElementById('proof-modal-title').textContent = 'Bukti Transfer — ' + orderId;
+    document.getElementById('form-confirm').action = '/admin/payment/confirm/' + orderDbId;
+    document.getElementById('form-reject').action = '/admin/payment/reject/' + orderDbId;
+
+    const actionsDiv = document.getElementById('modal-actions');
+    const statusTextDiv = document.getElementById('modal-status-text');
+    const descText = document.getElementById('proof-modal-order');
+
+    if (paymentStatus === 'uploaded') {
+        actionsDiv.style.display = 'flex';
+        statusTextDiv.style.display = 'none';
+        descText.textContent = 'Verifikasi foto bukti transfer sebelum mengkonfirmasi pembayaran.';
+    } else if (paymentStatus === 'confirmed') {
+        actionsDiv.style.display = 'none';
+        statusTextDiv.style.display = 'block';
+        statusTextDiv.style.backgroundColor = '#d1fae5';
+        statusTextDiv.style.color = '#065f46';
+        statusTextDiv.textContent = 'Pembayaran Telah Dikonfirmasi Lunas';
+        descText.textContent = 'Status pembayaran: Lunas (Confirmed)';
+    } else if (paymentStatus === 'rejected') {
+        actionsDiv.style.display = 'none';
+        statusTextDiv.style.display = 'block';
+        statusTextDiv.style.backgroundColor = '#fee2e2';
+        statusTextDiv.style.color = '#991b1b';
+        statusTextDiv.textContent = 'Pembayaran Telah Ditolak';
+        descText.textContent = 'Status pembayaran: Ditolak (Rejected)';
+    } else {
+        actionsDiv.style.display = 'none';
+        statusTextDiv.style.display = 'block';
+        statusTextDiv.style.backgroundColor = '#f3f4f6';
+        statusTextDiv.style.color = '#374151';
+        statusTextDiv.textContent = 'Status Pembayaran: ' + paymentStatus;
+        descText.textContent = 'Status pembayaran saat ini.';
+    }
+
+    const modal = document.getElementById('proof-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeProofModal() {
+    document.getElementById('proof-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.getElementById('proof-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeProofModal();
+});
+</script>
 @endsection

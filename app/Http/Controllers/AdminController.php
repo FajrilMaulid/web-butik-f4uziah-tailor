@@ -14,6 +14,8 @@ class AdminController extends Controller
     {
         $totalProducts = Product::count();
         $pendingOrders = Order::where('status', 'menunggu')->count();
+        $pendingPayments = Order::where('payment_status', 'uploaded')->count();
+
 
         // Pesanan selesai atau diambil yang sudah lunas/diterima
         $monthlyIncome = Order::whereMonth('created_at', date('m'))
@@ -51,7 +53,8 @@ class AdminController extends Controller
         }
         $chartLabels = range(1, $daysInMonth);
 
-        return view('pages.admin.dashboard', compact('totalProducts', 'pendingOrders', 'monthlyIncome', 'recentOrders', 'popularProducts', 'chartData', 'chartLabels'));
+        return view('pages.admin.dashboard', compact('totalProducts', 'pendingOrders', 'pendingPayments', 'monthlyIncome', 'recentOrders', 'popularProducts', 'chartData', 'chartLabels'));
+
     }
 
     public function settings()
@@ -78,11 +81,21 @@ class AdminController extends Controller
         $contactPhone = Setting::get('contact_phone', '+62 8234567891');
         $footerCopyright = Setting::get('footer_copyright', 'Copyright © F4uziah Tailor 2026');
 
+        // Info Rekening Bank
+        $bankName         = Setting::get('bank_name', 'BCA');
+        $bankAccountNumber = Setting::get('bank_account_number', '');
+        $bankAccountName  = Setting::get('bank_account_name', '');
+        $bankName2        = Setting::get('bank_name_2', '');
+        $bankAccountNumber2 = Setting::get('bank_account_number_2', '');
+        $bankAccountName2 = Setting::get('bank_account_name_2', '');
+
         return view('pages.admin.settings', compact(
             'adminWhatsapp', 'heroImage', 'aboutImage',
             'heroTitle', 'heroSubtitle', 'aboutTitle', 'aboutSubtitle', 'aboutDescription',
             'contactAddress', 'contactHours', 'contactEmail', 'contactMapsUrl',
-            'footerDescription', 'contactInstagram', 'contactPhone', 'footerCopyright'
+            'footerDescription', 'contactInstagram', 'contactPhone', 'footerCopyright',
+            'bankName', 'bankAccountNumber', 'bankAccountName',
+            'bankName2', 'bankAccountNumber2', 'bankAccountName2'
         ));
     }
 
@@ -152,6 +165,14 @@ class AdminController extends Controller
         Setting::set('contact_instagram', $request->contact_instagram ?? '@f4uziah_tailor');
         Setting::set('contact_phone', $request->contact_phone ?? '+62 8234567891');
         Setting::set('footer_copyright', $request->footer_copyright ?? 'Copyright © F4uziah Tailor 2026');
+
+        // Update Info Rekening Bank
+        Setting::set('bank_name', $request->bank_name ?? 'BCA');
+        Setting::set('bank_account_number', $request->bank_account_number ?? '');
+        Setting::set('bank_account_name', $request->bank_account_name ?? '');
+        Setting::set('bank_name_2', $request->bank_name_2 ?? '');
+        Setting::set('bank_account_number_2', $request->bank_account_number_2 ?? '');
+        Setting::set('bank_account_name_2', $request->bank_account_name_2 ?? '');
 
         return back()->with('success', 'Pengaturan Butik berhasil diperbarui!');
     }
