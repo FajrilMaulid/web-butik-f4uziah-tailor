@@ -14,6 +14,7 @@ class Order extends Model
         'notes',
         'reference_image',
         'payment_status',
+        'payment_code',
     ];
 
 
@@ -25,5 +26,10 @@ class Order extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function relatedOrders()
+    {
+        return $this->hasMany(Order::class, 'payment_code', 'payment_code');
     }
 }

@@ -37,8 +37,11 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
         $product = \App\Models\Product::find($productId);
 
+        $previousUrl = url()->previous();
+        $cleanUrl = strtok($previousUrl, '#');
+
         if (!$product) {
-            return back()->with('error', 'Produk tidak ditemukan!');
+            return redirect($cleanUrl . '#search')->with('error', 'Produk tidak ditemukan!');
         }
 
         // Gunakan md5 dari catatan agar pesanan dengan catatan berbeda tidak saling menimpa di keranjang
@@ -60,7 +63,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
         session()->put('cart', $cart);
 
-        return back()->with('success', 'Berhasil ditambahkan ke keranjang!');
+        return redirect($cleanUrl . '#search')->with('success', 'Berhasil ditambahkan ke keranjang!');
     })->name('cart.add');
 
     Route::get('/cart', function () {
@@ -84,6 +87,9 @@ Route::middleware(['auth', 'role:user'])->group(function () {
             return back()->with('error', 'Keranjang belanja Anda kosong.');
         }
 
+        // Generate payment code gabungan untuk seluruh checkout ini
+        $paymentCode = 'ORD-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(6));
+
         $orderIds = [];
         foreach ($cart as $item) {
             $orderNotes = 'Ukuran: ' . $item['size'] . ', Jumlah: ' . $item['quantity'];
@@ -98,6 +104,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
                 'status' => 'menunggu_pembayaran',
                 'payment_status' => 'unpaid',
                 'notes' => $orderNotes,
+                'payment_code' => $paymentCode,
             ]);
             $orderIds[] = $order->id;
         }

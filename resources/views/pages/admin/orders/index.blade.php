@@ -62,7 +62,15 @@
                 <tbody>
                     @forelse($orders as $order)
                         <tr>
-                            <td>#ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</td>
+                            <td>
+                                #ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
+                                @if($order->payment_code)
+                                    <br>
+                                    <span style="font-size: 11px; background-color: #eae0d5; color: #5c4436; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; font-weight: bold; white-space: nowrap;">
+                                        {{ $order->payment_code }}
+                                    </span>
+                                @endif
+                            </td>
                              <td>
                                  <strong>{{ $order->user->name ?? 'User Terhapus' }}</strong><br>
                                  <span style="font-size: 12px; color: #666; display: block; margin-top: 4px;">Alamat: {{ $order->user->address ?? 'Belum diisi' }}</span>
@@ -75,15 +83,37 @@
                                              $phoneClean = '62' . substr($phoneClean, 1);
                                          }
                                          
+                                         // Tentukan detail pesanan berdasarkan grup transaksi
+                                         if ($order->payment_code) {
+                                             $orderIdText = $order->payment_code;
+                                             $productDetails = "";
+                                             $totalPrice = 0;
+                                             
+                                             // Loop melalui relatedOrders untuk menggabungkan nama produk dan catatan
+                                             foreach ($order->relatedOrders as $idx => $relatedOrder) {
+                                                 $prodName = $relatedOrder->product->name ?? 'Pakaian';
+                                                 $cleanedNotes = str_replace('. Catatan:', ', Catatan:', $relatedOrder->notes ?? '-');
+                                                 $productDetails .= "\n" . ($idx + 1) . ". *" . $prodName . "* (" . $cleanedNotes . ") - Rp " . number_format($relatedOrder->total_price, 0, ',', '.');
+                                                 $totalPrice += $relatedOrder->total_price;
+                                             }
+                                             
+                                             $productSection = "*Daftar Produk:*" . $productDetails;
+                                         } else {
+                                             $orderIdText = "#ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT);
+                                             $cleanedNotes = str_replace('. Catatan:', "\n• Catatan Tambahan:", $order->notes ?? '-');
+                                             $productSection = "• Produk/Layanan: *" . ($order->product->name ?? 'Pakaian') . "*\n" .
+                                                               "• Detail Keterangan: *" . $cleanedNotes . "*";
+                                             $totalPrice = $order->total_price;
+                                         }
+                                         
                                          // Buat template pesan konfirmasi profesional (Bebas dari masalah emoticon encoding)
                                          $message = "*KONFIRMASI PESANAN - BUTIK F4UZIAHTAILOR*\n\n" .
                                                     "Kepada Yth. *" . ($order->user->name ?? 'Pelanggan') . "*,\n\n" .
                                                     "Terima kasih telah melakukan pemesanan pakaian di Butik F4UZIAHTAILOR. Kami mengonfirmasi bahwa pesanan Anda telah kami terima dengan detail sebagai berikut:\n\n" .
                                                     "*Detail Transaksi:*\n" .
-                                                    "• ID Pesanan: *#ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT) . "*\n" .
-                                                    "• Produk/Layanan: *" . ($order->product->name ?? 'Pakaian') . "*\n" .
-                                                    "• Detail Keterangan: *" . str_replace('. Catatan:', "\n• Catatan Tambahan:", $order->notes ?? '-') . "*\n" .
-                                                    "• Total Pembayaran: *Rp " . number_format($order->total_price, 0, ',', '.') . "*\n\n" .
+                                                    "• ID Pesanan/Transaksi: *" . $orderIdText . "*\n" .
+                                                    $productSection . "\n" .
+                                                    "• Total Pembayaran: *Rp " . number_format($totalPrice, 0, ',', '.') . "*\n\n" .
                                                     "Mohon lakukan pembayaran untuk memulai proses pembuatan/penjahitan pakaian Anda. Konfirmasi bukti pembayaran dapat langsung dikirimkan membalas chat ini.\n\n" .
                                                     "Jika ada pertanyaan lebih lanjut atau ingin berkonsultasi mengenai ukuran, jangan ragu untuk menghubungi kami kembali.\n\n" .
                                                     "Salam hangat,\n" .

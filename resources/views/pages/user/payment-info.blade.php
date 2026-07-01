@@ -14,22 +14,26 @@
                 </svg>
             </div>
             <h1>Pesanan Berhasil Dibuat!</h1>
-            <p>Pesanan <strong>#ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</strong> telah kami terima.<br>Silakan selesaikan pembayaran untuk memulai proses penjahitan.</p>
+            <p>Pesanan <strong>{{ $orderCode }}</strong> telah kami terima.<br>Silakan selesaikan pembayaran untuk memulai proses penjahitan.</p>
         </div>
 
         {{-- Ringkasan Pesanan --}}
         <div class="payment-order-summary">
-            <div class="summary-row">
-                <span>Produk</span>
-                <strong>{{ $order->product->name ?? 'Produk' }}</strong>
+            <h3 style="font-family: 'Lora', serif; font-size: 16px; color: var(--cokelat-gelap); margin-bottom: 12px; border-bottom: 1px solid #f0e8dc; padding-bottom: 8px;">Detail Produk Yang Dibeli</h3>
+            
+            @foreach($groupedOrders as $groupedOrder)
+            <div class="summary-row" style="flex-direction: column; align-items: flex-start; gap: 4px; padding-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                    <strong style="text-align: left; color: var(--teks-gelap);">{{ $groupedOrder->product->name ?? 'Produk' }}</strong>
+                    <span style="font-weight: 700; color: var(--cokelat-utama);">Rp {{ number_format($groupedOrder->total_price, 0, ',', '.') }}</span>
+                </div>
+                <div style="font-size: 13px; color: var(--teks-paragraf);">{{ $groupedOrder->notes }}</div>
             </div>
-            <div class="summary-row">
-                <span>Detail</span>
-                <strong>{{ $order->notes }}</strong>
-            </div>
-            <div class="summary-row total-row">
+            @endforeach
+
+            <div class="summary-row total-row" style="border-top: 2px solid #f0e8dc; padding-top: 15px; margin-top: 5px;">
                 <span>Total Pembayaran</span>
-                <strong class="total-amount">Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong>
+                <strong class="total-amount">Rp {{ number_format($totalPayment, 0, ',', '.') }}</strong>
             </div>
         </div>
 
@@ -86,7 +90,7 @@
                     <div class="step-num">1</div>
                     <div>
                         <strong>Lakukan Transfer</strong>
-                        <p>Transfer sejumlah <strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong> ke salah satu rekening di atas.</p>
+                        <p>Transfer sejumlah <strong>Rp {{ number_format($totalPayment, 0, ',', '.') }}</strong> ke salah satu rekening di atas.</p>
                     </div>
                 </li>
                 <li>
@@ -115,7 +119,7 @@
 
         {{-- Tombol Aksi --}}
         <div class="payment-actions">
-            <a href="{{ route('profile') }}" class="btn-go-profile">
+            <a href="{{ route('profile', ['tab' => 'history']) }}" class="btn-go-profile">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 Ke Halaman Profil (Upload Bukti)
             </a>

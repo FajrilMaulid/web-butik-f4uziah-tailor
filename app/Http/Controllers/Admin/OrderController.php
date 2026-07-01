@@ -13,7 +13,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        $orders = Order::with(['user', 'product'])
+        $orders = Order::with(['user', 'product', 'relatedOrders.product'])
             ->when($search, fn($q) => $q
                 ->whereHas('user', fn($uq) => $uq->where('name', 'like', "%{$search}%"))
                 ->orWhereHas('product', fn($pq) => $pq->where('name', 'like', "%{$search}%"))
@@ -102,8 +102,14 @@ class OrderController extends Controller
                 'status' => 'required|in:menunggu_pembayaran,menunggu,proses,selesai,diambil,batal'
             ]);
 
-            $order->update(['status' => $request->status]);
-            return back()->with('success', 'Status pesanan berhasil diperbarui.');
+            if ($order->payment_code) {
+                Order::where('payment_code', $order->payment_code)->update(['status' => $request->status]);
+                $message = 'Status seluruh pesanan dalam grup berhasil diperbarui.';
+            } else {
+                $order->update(['status' => $request->status]);
+                $message = 'Status pesanan berhasil diperbarui.';
+            }
+            return back()->with('success', $message);
         }
 
         // Update penuh dari halaman edit
@@ -133,6 +139,10 @@ class OrderController extends Controller
             'status' => $request->status,
             'notes' => $notes,
         ]);
+
+        if ($order->payment_code) {
+            Order::where('payment_code', $order->payment_code)->update(['status' => $request->status]);
+        }
 
         return redirect()->route('orders.index')->with('success', 'Transaksi berhasil diperbarui!');
     }

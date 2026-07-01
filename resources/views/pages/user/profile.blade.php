@@ -7,14 +7,14 @@
         <div class="profile-wrapper">
 
             <div class="profile-tabs-header">
-                <button class="tab-btn active" id="btn-tab-akun" onclick="openProfileTab('akun')">Akun Saya</button>
-                <button class="tab-btn" id="btn-tab-history" onclick="openProfileTab('history')">History Pemesanan</button>
+                <button class="tab-btn {{ request('tab') !== 'history' ? 'active' : '' }}" id="btn-tab-akun" onclick="openProfileTab('akun')">Akun Saya</button>
+                <button class="tab-btn {{ request('tab') === 'history' ? 'active' : '' }}" id="btn-tab-history" onclick="openProfileTab('history')">History Pemesanan</button>
             </div>
 
             <div class="profile-body">
                 <div class="profile-inner-card">
 
-                    <div id="tab-akun" class="profile-tab-content active">
+                    <div id="tab-akun" class="profile-tab-content {{ request('tab') !== 'history' ? 'active' : '' }}">
 
                         <form action="{{ route('profile.update') }}" method="POST" class="profile-form" enctype="multipart/form-data">
                             @csrf
@@ -68,7 +68,7 @@
                     </div>
 
 
-                    <div id="tab-history" class="profile-tab-content">
+                    <div id="tab-history" class="profile-tab-content {{ request('tab') === 'history' ? 'active' : '' }}">
 
                         <div class="history-filters">
                             <button class="filter-hist-btn active" onclick="filterHistory('semua', this)">Semua</button>
@@ -79,7 +79,7 @@
                         </div>
 
                         <div class="history-list">
-                            @if($orders->count() > 0)
+                            @if($groupedOrders->count() > 0)
                                 <!-- Placeholder ketika tidak ada data di fase filter tertentu -->
                                 <div id="no-orders-placeholder" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #888; width: 100%;">
                                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px; color: #888;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -87,9 +87,10 @@
                                 </div>
                             @endif
 
-                            @forelse($orders as $order)
+                            @forelse($groupedOrders as $groupKey => $group)
                                 @php
-                                    $statusText = match($order->status) {
+                                    $firstOrder = $group->first();
+                                    $statusText = match($firstOrder->status) {
                                         'menunggu_pembayaran' => 'Belum Bayar',
                                         'menunggu' => 'Menunggu Konfirmasi',
                                         'proses' => 'Dikerjakan',
@@ -99,7 +100,7 @@
                                         default => 'Menunggu'
                                     };
                                     
-                                    $statusColor = match($order->status) {
+                                    $statusColor = match($firstOrder->status) {
                                         'menunggu_pembayaran' => '#f97316',
                                         'menunggu' => '#f59e0b',
                                         'proses' => '#3b82f6',
@@ -108,45 +109,69 @@
                                         'batal' => '#ef4444',
                                         default => '#6b7280'
                                     };
+                                    
+                                    $orderCode = $firstOrder->payment_code ?? ('#ORD-' . str_pad($firstOrder->id, 5, '0', STR_PAD_LEFT));
                                 @endphp
-                                <div class="history-card" data-status="{{ $order->status }}">
-                                    <img src="{{ $order->product->image ? asset('storage/' . $order->product->image) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=200&auto=format&fit=crop' }}" alt="{{ $order->product->name ?? 'Produk' }}">
-                                    <div class="hist-details">
-                                        <h3>{{ $order->product->name ?? 'Produk Terhapus' }}</h3>
-                                        <p class="hist-size">{{ $order->notes }}</p>
-                                        <p class="hist-status">Status: <span style="color: {{ $statusColor }}; font-weight: bold;">{{ $statusText }}</span></p>
-
-                                        {{-- Upload Bukti Transfer (jika belum bayar) --}}
-                                        @if($order->status === 'menunggu_pembayaran')
-                                        <div class="upload-proof-area">
-                                            <a href="{{ route('payment.info', $order->id) }}" class="btn-payment-info">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                                                Lihat Info Rekening
-                                            </a>
-                                            <form action="{{ route('payment.upload', $order->id) }}" method="POST" enctype="multipart/form-data" class="upload-form">
-                                                @csrf
-                                                <label class="btn-upload-proof" for="proof-{{ $order->id }}">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
-                                                    Upload Bukti Transfer
-                                                </label>
-                                                <input type="file" id="proof-{{ $order->id }}" name="payment_proof" accept="image/*" style="display:none;" onchange="this.form.submit()">
-                                            </form>
-                                        </div>
-                                        @endif
-
-                                        {{-- Preview bukti yang sudah diupload --}}
-                                        @if($order->status === 'menunggu' && $order->reference_image)
-                                        <div class="proof-uploaded-info">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                            Bukti transfer sudah dikirim — menunggu verifikasi admin.
-                                        </div>
-                                        @endif
+                                <div class="history-card" data-status="{{ $firstOrder->status }}" style="flex-direction: column; align-items: stretch; gap: 15px; padding: 20px;">
+                                    
+                                    <div class="group-items-list" style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                                        @foreach($group as $order)
+                                            <div class="group-item-row" style="display: flex; gap: 15px; align-items: center; border-bottom: 1px dashed #f0e8dc; padding-bottom: 12px; margin-bottom: 2px;">
+                                                <img src="{{ $order->product->image ? asset('storage/' . $order->product->image) : 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=200&auto=format&fit=crop' }}" alt="{{ $order->product->name ?? 'Produk' }}" style="width: 64px; height: 64px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+                                                <div class="hist-details" style="flex: 1; padding: 0;">
+                                                    <h3 style="margin: 0; font-family: 'Lora', serif; font-size: 15px; color: var(--teks-gelap);">{{ $order->product->name ?? 'Produk Terhapus' }}</h3>
+                                                    <p class="hist-size" style="margin: 4px 0 0 0; font-size: 13px; color: var(--teks-paragraf);">{{ $order->notes }}</p>
+                                                </div>
+                                                <div style="text-align: right; flex-shrink: 0;">
+                                                    <span style="font-weight: 700; color: var(--teks-gelap); font-size: 14px;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                    <div class="hist-price-info">
-                                        <p class="hist-total">Total: <strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong></p>
-                                        @if($order->status === 'menunggu_pembayaran')
-                                        <span class="badge-unpaid">Segera Bayar</span>
-                                        @endif
+
+                                    <div class="group-card-footer" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; width: 100%; border-top: 1px solid #f0e8dc; padding-top: 12px;">
+                                        <div style="flex: 1; min-width: 200px;">
+                                            <p class="hist-status" style="margin: 0; font-size: 13px; color: #888;">
+                                                No. Order: <strong style="color: var(--teks-gelap);">{{ $orderCode }}</strong>
+                                            </p>
+                                            <p class="hist-status" style="margin: 5px 0 0 0; font-size: 13px; color: #888;">
+                                                Status: <span style="color: {{ $statusColor }}; font-weight: 700;">{{ $statusText }}</span>
+                                            </p>
+
+                                            {{-- Upload Bukti Transfer (jika belum bayar) --}}
+                                            @if($firstOrder->status === 'menunggu_pembayaran')
+                                            <div class="upload-proof-area" style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                                                <a href="{{ route('payment.info', $firstOrder->id) }}" class="btn-payment-info" style="font-size: 12px; padding: 7px 12px; border-radius: 6px;">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                                    Lihat Info Rekening
+                                                </a>
+                                                <form action="{{ route('payment.upload', $firstOrder->id) }}" method="POST" enctype="multipart/form-data" class="upload-form">
+                                                    @csrf
+                                                    <label class="btn-upload-proof" for="proof-{{ $firstOrder->id }}" style="font-size: 12px; padding: 7px 12px; border-radius: 6px;">
+                                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
+                                                        Upload Bukti
+                                                    </label>
+                                                    <input type="file" id="proof-{{ $firstOrder->id }}" name="payment_proof" accept="image/*" style="display:none;" onchange="this.form.submit()">
+                                                </form>
+                                            </div>
+                                            @endif
+
+                                            {{-- Preview bukti yang sudah diupload --}}
+                                            @if($firstOrder->status === 'menunggu' && $firstOrder->reference_image)
+                                            <div class="proof-uploaded-info" style="margin-top: 10px; font-size: 12px; color: #059669; background: #ecfdf5; border: 1px solid #d1fae5; padding: 8px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                Bukti transfer sudah dikirim — menunggu verifikasi.
+                                            </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="hist-price-info" style="text-align: right; margin: 0; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;">
+                                            <p class="hist-total" style="margin: 0; font-size: 13px; color: #888;">Total Pembayaran:</p>
+                                            <strong style="font-size: 18px; color: var(--cokelat-utama); font-family: 'Lora', serif; margin-top: 4px;">Rp {{ number_format($group->sum('total_price'), 0, ',', '.') }}</strong>
+                                            @if($firstOrder->status === 'menunggu_pembayaran')
+                                                <span class="badge-unpaid" style="margin-top: 6px;">Segera Bayar</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             @empty

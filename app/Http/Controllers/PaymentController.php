@@ -20,6 +20,19 @@ class PaymentController extends Controller
             abort(403);
         }
 
+        // Ambil grup pesanan yang sama jika ada payment_code
+        if ($order->payment_code) {
+            $groupedOrders = Order::with('product')
+                ->where('payment_code', $order->payment_code)
+                ->get();
+            $orderCode = $order->payment_code;
+        } else {
+            $groupedOrders = collect([$order]);
+            $orderCode = '#ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT);
+        }
+
+        $totalPayment = $groupedOrders->sum('total_price');
+
         $bankName        = Setting::get('bank_name', 'BCA');
         $bankAccount     = Setting::get('bank_account_number', '1234567890');
         $bankAccountName = Setting::get('bank_account_name', 'F4UZIAH TAILOR');
@@ -32,11 +45,14 @@ class PaymentController extends Controller
         if (strpos($adminWaClean, '0') === 0) {
             $adminWaClean = '62' . substr($adminWaClean, 1);
         }
-        $waMessage = "Halo Butik F4UZIAHTAILOR, saya sudah melakukan transfer untuk pesanan #ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ". Mohon dikonfirmasi. Terima kasih.";
+        $waMessage = "Halo Butik F4UZIAHTAILOR, saya sudah melakukan transfer untuk pesanan " . $orderCode . " senilai Rp " . number_format($totalPayment, 0, ',', '.') . ". Mohon dikonfirmasi. Terima kasih.";
         $waUrl = "https://wa.me/" . $adminWaClean . "?text=" . urlencode($waMessage);
 
         return view('pages.user.payment-info', compact(
             'order',
+            'groupedOrders',
+            'orderCode',
+            'totalPayment',
             'bankName', 'bankAccount', 'bankAccountName',
             'bankName2', 'bankAccount2', 'bankAccountName2',
             'waUrl'
@@ -69,13 +85,19 @@ class PaymentController extends Controller
         // Simpan bukti baru
         $path = $request->file('payment_proof')->store('payment_proofs', 'public');
 
-        $order->update([
+        $updateData = [
             'reference_image' => $path,
             'payment_status'  => 'uploaded',
             'status'          => 'menunggu',
-        ]);
+        ];
 
-        return redirect()->route('profile')
+        if ($order->payment_code) {
+            Order::where('payment_code', $order->payment_code)->update($updateData);
+        } else {
+            $order->update($updateData);
+        }
+
+        return redirect()->route('profile', ['tab' => 'history'])
             ->with('success', 'Bukti transfer berhasil dikirim! Menunggu konfirmasi dari admin.');
     }
 
@@ -84,12 +106,20 @@ class PaymentController extends Controller
      */
     public function confirm(Order $order)
     {
-        $order->update([
+        $updateData = [
             'payment_status' => 'confirmed',
             'status'         => 'proses',
-        ]);
+        ];
 
-        return back()->with('success', "Pembayaran pesanan #ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT) . " berhasil dikonfirmasi. Status pesanan diubah ke Diproses.");
+        if ($order->payment_code) {
+            Order::where('payment_code', $order->payment_code)->update($updateData);
+            $message = "Pembayaran pesanan grup " . $order->payment_code . " berhasil dikonfirmasi. Status pesanan diubah ke Diproses.";
+        } else {
+            $order->update($updateData);
+            $message = "Pembayaran pesanan #ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT) . " berhasil dikonfirmasi. Status pesanan diubah ke Diproses.";
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
@@ -97,11 +127,19 @@ class PaymentController extends Controller
      */
     public function reject(Order $order)
     {
-        $order->update([
+        $updateData = [
             'payment_status' => 'rejected',
             'status'         => 'batal',
-        ]);
+        ];
 
-        return back()->with('success', "Pembayaran pesanan #ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT) . " ditolak. Status pesanan diubah ke Batal.");
+        if ($order->payment_code) {
+            Order::where('payment_code', $order->payment_code)->update($updateData);
+            $message = "Pembayaran pesanan grup " . $order->payment_code . " ditolak. Status pesanan diubah ke Batal.";
+        } else {
+            $order->update($updateData);
+            $message = "Pembayaran pesanan #ORD-" . str_pad($order->id, 5, '0', STR_PAD_LEFT) . " ditolak. Status pesanan diubah ke Batal.";
+        }
+
+        return back()->with('success', $message);
     }
 }

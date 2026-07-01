@@ -15,7 +15,14 @@ class ProfileController extends Controller
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
-        return view('pages.user.profile', compact('orders'));
+
+        // Mengelompokkan pesanan berdasarkan payment_code.
+        // Jika payment_code bernilai null (data lama), kelompokkan secara individu berdasarkan order ID.
+        $groupedOrders = $orders->groupBy(function ($order) {
+            return $order->payment_code ?? 'individual-' . $order->id;
+        });
+
+        return view('pages.user.profile', compact('groupedOrders'));
     }
 
     // Proses memperbarui data akun user
